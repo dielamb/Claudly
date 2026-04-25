@@ -73,9 +73,15 @@ classify() {
     fi
   fi
 
-  # 4b. Polish production imperatives (napisz=write, zrób=do, zbuduj=build, stwórz=create, wygeneruj=generate, zaimplementuj=implement, dodaj=add, napraw=fix, zaktualizuj=update, wdróż=deploy, skonfiguruj=configure, ustaw=set, uruchom=run, przygotuj=prepare, wykonaj=execute, opublikuj=publish, wypuść=release, wyślij=send, usuń=delete, przenieś=move)
+  # 4b. Production imperatives — Polish and English
+  # Polish: napisz=write, zrób=do, zbuduj=build, stwórz=create, wygeneruj=generate, etc.
   if printf '%s' "$p" | grep -qE \
     '^(napisz|zrob|zrób|zbuduj|stworz|stwórz|wygeneruj|zaimplementuj|dodaj|napraw|zaktualizuj|wdroz|wdróż|skonfiguruj|ustaw|uruchom|przygotuj|wykonaj|opublikuj|wypusc|wypuść|wyslij|wyślij|usun|usuń|przenies|przenieś)[[:space:]]'; then
+    printf 'SUFFICIENT:PRODUCTION'; return
+  fi
+  # English production imperatives
+  if printf '%s' "$p" | grep -qE \
+    '^(write|build|create|generate|implement|add|fix|update|deploy|configure|set up|run|prepare|execute|publish|release|send|delete|move|refactor|migrate|integrate|scaffold|bootstrap)[[:space:]]'; then
     printf 'SUFFICIENT:PRODUCTION'; return
   fi
 
