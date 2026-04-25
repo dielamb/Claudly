@@ -230,6 +230,44 @@ lean-ctx init 2>/dev/null \
   && ok "lean-ctx shell aliases installed" \
   || info "lean-ctx shell hook: run 'lean-ctx init' manually"
 
+# ── Cron jobs ────────────────────────────────────────────────
+echo ""
+echo "[post-install] Setting up cron jobs..."
+NODE_BIN="$(which node 2>/dev/null || echo node)"
+CLAUDE="$HOME/.claude"
+
+# Remove any existing Claudly cron entries to avoid duplicates
+( crontab -l 2>/dev/null | grep -v "# Claudly\|ruflo-weekly\|ruflo-hygiene\|ruflo-monthly\|skill-map\|nightly-maintenance\|monthly-rule\|weekly-health\|inbox-nudge\|janitor/orchestrator" ) | crontab - 2>/dev/null || true
+
+# Install fresh cron entries
+(
+  crontab -l 2>/dev/null
+  cat <<CRON
+# Claudly — weekly review (Sunday 20:00)
+0 20 * * 0 bash $CLAUDE/scripts/ruflo-weekly-review.sh >> $CLAUDE/logs/weekly-review.log 2>&1
+# Claudly — bi-weekly hygiene (every other Sunday 20:30)
+30 20 */14 * * bash $CLAUDE/scripts/ruflo-hygiene.sh >> $CLAUDE/logs/hygiene.log 2>&1
+# Claudly — monthly consolidation (1st of month 20:00)
+0 20 1 * * bash $CLAUDE/scripts/ruflo-monthly-consolidate.sh >> $CLAUDE/logs/monthly.log 2>&1
+# Claudly — skill map update (Sunday 21:00)
+0 21 * * 0 bash $CLAUDE/scripts/skill-map-update.sh >> $CLAUDE/logs/skill-map.log 2>&1
+# Claudly — nightly maintenance (02:00 daily)
+0 2 * * * bash $CLAUDE/helpers/nightly-maintenance.sh >> $CLAUDE/logs/maintenance.log 2>&1
+# Claudly — janitor (02:00 daily)
+0 2 * * * $NODE_BIN $CLAUDE/helpers/janitor/orchestrator.mjs >> $CLAUDE/helpers/janitor/logs/cron.log 2>&1
+# Claudly — monthly rule maintenance (1st of month 09:00)
+0 9 1 * * bash $CLAUDE/helpers/monthly-rule-maintenance.sh >> $CLAUDE/logs/monthly-rules.log 2>&1
+# Claudly — weekly health report (Monday 08:00)
+0 8 * * 1 $NODE_BIN $CLAUDE/helpers/weekly-health-report.js >> $CLAUDE/logs/weekly-health.log 2>&1
+# Claudly — inbox nudge (09:00 daily)
+0 9 * * * bash $CLAUDE/helpers/inbox-nudge.sh >> $CLAUDE/logs/inbox-nudge.log 2>&1
+CRON
+) | crontab - 2>/dev/null \
+  && ok "9 cron jobs installed (weekly review, hygiene, maintenance, janitor...)" \
+  || info "Cron setup failed — run 'crontab -e' manually (see GETTING_STARTED.md)"
+
+mkdir -p "$HOME/.claude/logs"
+
 # ── Done ─────────────────────────────────────────────────────
 echo ""
 echo "================================================"
