@@ -53,9 +53,9 @@ For each problem/learning identified:
   quality: [high/normal/low]
   breakthrough_commit: \"[hash or empty]\"
   ---
-  [fill sections: Problem, Kontekst, Rozwiązanie, Dlaczego zadziałało]
+  [fill sections: Problem, Context, Solution, Why it worked]
 
-For decisions (signals: 'zostaje', 'idziemy z', 'usuwamy', 'zdecydowałem'):
+For decisions (signals: 'zostaje'/'it stays', 'idziemy z'/'we're going with', 'usuwamy'/'we're removing', 'zdecydowałem'/'I decided'):
 - Append to ~/Desktop/Labirynt/3 Atlas/Career/Decisions.md
 
 ## Step 4: Write daily note

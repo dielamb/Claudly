@@ -10,7 +10,7 @@
  *   high:
  *     - breakthrough_commit field filled (non-empty)
  *     - "finally", "wreszcie", "after N hours", "po N godzinach" in content
- *     - "breakthrough", "przełom" in content
+ *     - "breakthrough", "przełom" (Polish: breakthrough) in content
  *     - frontmatter tags contain "debug", "critical", "hard"
  *     - file length >2000 chars (deep problem)
  *

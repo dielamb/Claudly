@@ -84,7 +84,7 @@ async function main() {
     const quality = frontmatter.quality || 'normal';
     if (quality === 'low') continue;
 
-    const extracted = extractSections(content, ['## Problem', '## Rozwiązanie', '## Efekt', '## Solution', '## Effect']);
+    const extracted = extractSections(content, ['## Problem', '## Rozwiązanie', '## Efekt', '## Solution', '## Effect', '## Context', '## Why it worked']);
     const patternText = extracted || content.slice(0, 800);
 
     patterns.push({

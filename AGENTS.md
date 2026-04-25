@@ -51,5 +51,5 @@ GAN Loop (~/tools/gan-loop/)
 
 ## GAN Loop
 
-Triggered automatically on "napisz/zrób/stwórz/wygeneruj" verbs.
+Triggered automatically on "napisz/zrób/stwórz/wygeneruj" verbs (Polish: write/do/create/generate).
 Manual: `cd ~/tools/gan-loop && ./run.sh briefs/task.md`

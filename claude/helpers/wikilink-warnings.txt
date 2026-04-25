@@ -1,1 +1,0 @@
-WARN: rule cc5031f5-4b6d-40c1-aee4-66c98cb629d8 has stale link [[CSS - sprawdz HTML strukture przed pisanjem selektorow]] (note not found in vault)

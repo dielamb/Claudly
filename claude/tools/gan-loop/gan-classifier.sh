@@ -52,13 +52,13 @@ classify() {
     printf 'SUFFICIENT:EXPLORATORY'; return
   fi
 
-  # 3b. Question words at start (EN + PL)
+  # 3b. Question words at start (EN + PL: jak=how, co=what, dlaczego=why, kiedy=when, gdzie=where, który=which, czy=whether, kto=who, ile=how many)
   if printf '%s' "$p" | grep -qE \
     '^(how|what|why|when|where|which|who|whose|whom|can|could|should|would|is|are|do|does|did|will|has|have|jak|co|dlaczego|kiedy|gdzie|ktory|który|czy|kto|ile)[[:space:]]'; then
     printf 'SUFFICIENT:EXPLORATORY'; return
   fi
 
-  # 3c. Analytical verbs (EN + PL)
+  # 3c. Analytical verbs (EN + PL: podsumuj=summarize, wytlumacz=explain, sprawdz=check, przeanalizuj=analyze, opisz=describe, powiedz=tell, porownaj=compare, ocen/oceń=evaluate)
   if printf '%s' "$p" | grep -qE \
     '^(explain|describe|analyze|analyse|review|check|verify|compare|summarize|summarise|list|show|tell|discuss|consider|evaluate|assess|critique|suggest|recommend|think|guess|estimate|predict|podsumuj|wytlumacz|sprawdz|przeanalizuj|opisz|powiedz|porownaj|ocen|oceń)[[:space:]]'; then
     printf 'SUFFICIENT:EXPLORATORY'; return
@@ -73,7 +73,7 @@ classify() {
     fi
   fi
 
-  # 4b. Polish production imperatives
+  # 4b. Polish production imperatives (napisz=write, zrób=do, zbuduj=build, stwórz=create, wygeneruj=generate, zaimplementuj=implement, dodaj=add, napraw=fix, zaktualizuj=update, wdróż=deploy, skonfiguruj=configure, ustaw=set, uruchom=run, przygotuj=prepare, wykonaj=execute, opublikuj=publish, wypuść=release, wyślij=send, usuń=delete, przenieś=move)
   if printf '%s' "$p" | grep -qE \
     '^(napisz|zrob|zrób|zbuduj|stworz|stwórz|wygeneruj|zaimplementuj|dodaj|napraw|zaktualizuj|wdroz|wdróż|skonfiguruj|ustaw|uruchom|przygotuj|wykonaj|opublikuj|wypusc|wypuść|wyslij|wyślij|usun|usuń|przenies|przenieś)[[:space:]]'; then
     printf 'SUFFICIENT:PRODUCTION'; return
@@ -157,7 +157,7 @@ if [[ "${1:-}" == "--test" ]]; then
   run_case "What do you think about using Redis for sessions?"             "SUFFICIENT:EXPLORATORY"
   run_case "Explain how pin-scroll.js handles sticky sections"             "SUFFICIENT:EXPLORATORY"
   run_case "napisz kompletny skrypt drift detector dla www_v2"             "SUFFICIENT:PRODUCTION"
-  run_case "co myślisz o tym designie?"                                    "SUFFICIENT:EXPLORATORY"
+  run_case "co myślisz o tym designie?"                                    "SUFFICIENT:EXPLORATORY"  # Polish: "what do you think about this design?"
   echo ""; echo "Results: ${PASS} passed, ${FAIL} failed"
   [[ "$FAIL" -eq 0 ]] && exit 0 || exit 1
 fi

@@ -2,7 +2,7 @@
 
 ## GAN Loop Quality Gate (always active)
 Output ships → GAN loop. Output exploratory → direct.
-Trigger: "napisz/zrób/wygeneruj/stwórz" bez "szkic/propozycja/sprawdź/co myślisz".
+Trigger: "napisz/zrób/wygeneruj/stwórz" (Polish trigger words: write/do/generate/create) without "szkic/propozycja/sprawdź/co myślisz" (Polish: draft/proposal/check/what do you think).
 
 Profile — RuFlo classifies, I execute:
 - `fast` → `codex exec`, threshold 8.0, 2 iter, ~30 sec — sync
@@ -37,8 +37,8 @@ Any operation > 30 seconds → `run_in_background: true`. Never block the conver
 - `Agent(run_in_background=true)` — all agent spawns
 - `Bash(run_in_background=true)` — GAN loop, builds, tests, installs, long scripts
 
-After launching: say "odpaliłem, możesz pisać — dostanę powiadomienie gdy skończy." Then continue working.
-Never say "czekam na wynik" and go silent. That blocks the user for no reason.
+After launching: say "Launched in background, you can continue — I'll get a notification when done." Then continue working.
+Never go silent waiting for results. That blocks the user for no reason.
 
 Short ops (<5s): foreground — result needed immediately.
 

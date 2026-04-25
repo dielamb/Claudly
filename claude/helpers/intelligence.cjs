@@ -161,7 +161,7 @@ function writeInsightToObsidian(summary, content) {
 const NEGATIVE_SIGNALS = [
   'nie tak', 'nie to', 'wrong', 'bad', 'revert', 'undo', 'cofnij',
   'fix this', 'napraw', 'popraw', 'to nie dziala', 'doesn\'t work',
-  'nie działa', 'zle', 'źle', 'blad', 'błąd', 'error', 'bug',
+  'nie działa', 'zle', 'źle', 'blad', 'błąd', 'error', 'bug',  // Polish: doesn't work, bad, error
 ];
 
 function detectNegativeSignal(prompt) {

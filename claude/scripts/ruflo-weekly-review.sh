@@ -98,20 +98,20 @@ week: $WEEK
 
 # Weekly Review $WEEK
 
-## Co sie dzialo
+## What happened
 - [main activities]
 
-## Wzorce
+## Patterns
 - [recurring themes or problems]
 
 ## Learned this week
 - [Problem files created/updated, what was high-quality]
 
-## Graf tygodnia
-- Isolated nodes (brakujące wikilinki): [top 3-5 z Knowledge Gaps]
-- Sugerowane połączenia: [1-2 konkretne linki do dodania w Obsidian]
+## Graph of the week
+- Isolated nodes (missing wikilinks): [top 3-5 from Knowledge Gaps]
+- Suggested connections: [1-2 specific links to add in Obsidian]
 
-## Na nastepny tydzien
+## Next week
 - [what to focus on based on patterns]
 
 Keep under 350 words. Be specific.

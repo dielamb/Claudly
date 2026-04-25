@@ -83,7 +83,7 @@ $(printf "$OTHER_TABLE")"
 if [ "$NEW_COUNT" -gt 0 ]; then
   NEW_SECTION+="
 
-### Nowe skille (wykryte, bez routingu) — wymagają ręcznego dodania do tabeli powyżej
+### New skills (detected, no routing) — require manual addition to the table above
 
 $(printf "$NEW_TABLE")"
 fi
@@ -121,7 +121,7 @@ PYEOF
 if [ $? -eq 0 ]; then
   echo "[$DATE] Skill map updated. New skills detected: $NEW_COUNT" >> "$LOG"
   if [ "$NEW_COUNT" -gt 0 ]; then
-    osascript -e "display notification \"$NEW_COUNT nowych skilli wymaga routingu w Skill Map\" with title \"Skill Map Update\" sound name \"Funk\"" 2>/dev/null || true
+    osascript -e "display notification \"$NEW_COUNT new skills require routing in Skill Map\" with title \"Skill Map Update\" sound name \"Funk\"" 2>/dev/null || true
   fi
 else
   echo "[$DATE] ERROR: Python replace failed" >> "$LOG"

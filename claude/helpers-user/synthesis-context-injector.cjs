@@ -25,7 +25,7 @@ const SYNTHESIS_DIR = path.join(HOME, 'Desktop', 'Labirynt', '3 Atlas', 'Synthes
 
 // Synthesis intent keywords (PL + EN)
 const INTENT_PATTERNS = [
-  // Polish
+  // Polish (compare, comparison; summarize, summary, synthesis; analyze, review; how does X relate to; explain, describe; why; differences, similarities, alternatives)
   /\b(porównaj|porównanie|vs)\b/i,
   /\b(podsumuj|podsumowanie|syntez[ayę]|synteza)\b/i,
   /\b(analiza|przeanalizuj|przeglądnij)\b/i,

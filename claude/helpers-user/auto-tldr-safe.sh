@@ -117,7 +117,7 @@ Classification logic (follow in order):
    → Do NOT use for: trivial lookups, debug walkthroughs, single-source answers (those belong in original note)
    → Follow Karpathy LLM Wiki pattern: good answers become compounding synthesis pages
 
-6. **Is it a decision** (user said: zdecydowałem, idziemy z, zostaje)?
+6. **Is it a decision** (user said: zdecydowałem/I decided, idziemy z/we're going with, zostaje/it stays)?
    → append to \`3 Atlas/Career/Decisions.md\`
 
 7. **Is it a personal fact** (weight, rate, preference)?
@@ -155,9 +155,9 @@ quality: [high/normal/low]
 breakthrough_commit: \"[hash or empty]\"
 ---
 ## Problem
-## Kontekst
-## Rozwiązanie
-## Dlaczego zadziałało
+## Context
+## Solution
+## Why it worked
 \`\`\`
 
 **pattern (Code/):**
@@ -168,10 +168,10 @@ created: $DATE
 tags: []
 language: [css/js/ts/etc]
 ---
-## Wzorzec
-## Kod
-## Kiedy używać
-## Powiązane
+## Pattern
+## Code
+## When to use
+## Related
 [[wikilinks to related Problems/ or Design/]]
 \`\`\`
 
@@ -183,10 +183,10 @@ created: $DATE
 tags: []
 scope: [typography/spacing/color/layout/motion]
 ---
-## Zasada
-## Dlaczego
-## Przykłady zastosowania
-## Powiązane
+## Principle
+## Why
+## Usage examples
+## Related
 [[wikilinks]]
 \`\`\`
 
@@ -197,10 +197,10 @@ type: tool-note
 created: $DATE
 tags: []
 ---
-## Narzędzie
+## Tool
 ## Use case
 ## Setup
-## Notatki
+## Notes
 \`\`\`
 
 **idea (Ideas/):**
@@ -211,9 +211,9 @@ created: $DATE
 tags: []
 status: [draft/considering/rejected]
 ---
-## Pomysł
-## Dlaczego ma sens
-## Kroki do walidacji
+## Idea
+## Why it makes sense
+## Validation steps
 \`\`\`
 
 **synthesis (Synthesis/):**
@@ -226,17 +226,17 @@ sources: [[Note A]], [[Note B]], [[Note C]]
 tags: []
 quality: [high/normal]
 ---
-## Pytanie
+## Question
 [Rephrased question]
 
-## Synteza
-[3–6 akapitów — destylacja, NIE copy-paste z sources]
+## Synthesis
+[3–6 paragraphs — distillation, NOT copy-paste from sources]
 
-## Kluczowe insighty
+## Key insights
 - [non-obvious takeaway]
 
-## Źródła
-- [[Note A]] — [co stamtąd wzięto]
+## Sources
+- [[Note A]] — [what was taken from it]
 \`\`\`
 
 **unsorted (0 Inbox/):**
@@ -273,11 +273,11 @@ Keep this lightweight — scan max 3 related notes, don't deep-dive.
 
 ## Step 5: Write daily note
 
-Append to $DAILY_NOTE under '## Sesje z Claude':
+Append to $DAILY_NOTE under '## Claude Sessions':
 ### Session auto ($DATE)
-**Projekt:** [main project]
-**Zrobiono:** [2-4 bullets]
-**Zapisano:** [filenames grouped by folder, e.g. 'Problems/ X.md + Code/ Y.md']
+**Project:** [main project]
+**Done:** [2-4 bullets]
+**Saved:** [filenames grouped by folder, e.g. 'Problems/ X.md + Code/ Y.md']
 **Inbox:** [count of unsorted, if any]
 
 Max 100 words. Details live in individual notes.

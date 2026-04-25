@@ -1,78 +1,78 @@
 # Labirynt — Second Brain AI Router
 
-Ten vault to twój drugi mózg. Zawiera wiedzę prywatną i zawodową.
-Jako AI agent, przestrzegaj tych zasad przy czytaniu i zapisywaniu.
+This vault is your second brain. It contains private and professional knowledge.
+As an AI agent, follow these rules when reading and writing.
 
-## Struktura
+## Structure
 
-| Folder | Co zawiera | Kiedy używać |
+| Folder | Contents | When to use |
 |--------|-----------|-------------|
-| `0 Inbox/` | **Low-confidence buffer** — notatki gdzie AI nie jest pewny folderu (<70%) | Przy ambiguous content, review w weekly |
-| `1 Calendar/` | Daily notes (YYYY-MM-DD.md) | Dzienniki, sesje, /tldr |
-| `2 Efforts/` | Aktywne projekty i wysiłki | Projekty z jasnym celem |
-| `3 Atlas/` | Baza wiedzy — atomowe notatki | Fakty, wzorce, rozwiązania |
-| `4 People/` | Osoby + historia interakcji | 2+ wzmianki = twórz notatkę |
-| `5 Sources/` | Książki, artykuły, kursy, filmy | Zewnętrzne źródła wiedzy |
-| `6 Maps/` | MOC (Map of Content) | Gdy 5+ notatek o temacie |
-| `Archive/` | Porzucone efforts, stare notatki | Nigdy nie kasuj — przenoś tu |
-| `Templates/` | Szablony notatek | Używaj przy tworzeniu nowych notatek |
+| `0 Inbox/` | **Low-confidence buffer** — notes where AI is uncertain about folder (<70%) | For ambiguous content, review in weekly |
+| `1 Calendar/` | Daily notes (YYYY-MM-DD.md) | Journals, sessions, /tldr |
+| `2 Efforts/` | Active projects and efforts | Projects with a clear goal |
+| `3 Atlas/` | Knowledge base — atomic notes | Facts, patterns, solutions |
+| `4 People/` | People + interaction history | 2+ mentions = create a note |
+| `5 Sources/` | Books, articles, courses, videos | External knowledge sources |
+| `6 Maps/` | MOC (Map of Content) | When 5+ notes on a topic |
+| `Archive/` | Abandoned efforts, old notes | Never delete — move here |
+| `Templates/` | Note templates | Use when creating new notes |
 
-### Atlas — podfoldery
+### Atlas — subfolders
 
-| Podfolder | Przykłady |
+| Subfolder | Examples |
 |-----------|-----------|
-| `Design/` | Wzorce UI, zasady typografii, token architecture |
-| `Code/` | CSS tricki, JS patterns, snippety |
-| `Tools/` | MCPy, pluginy, narzędzia, konfiguracje |
-| `Health/` | Waga, trening, zdrowie, suplementy |
-| `Finance/` | Stawki, wydatki, inwestycje, podatki |
-| `Career/` | CV, decyzje zawodowe, preferencje pisania |
-| `Problems/` | Problem-solution notes (rozwiązane problemy) |
-| `Synthesis/` | **Syntezy z rozmów** — compounding answers na nietrywialne pytania |
-| `Reasoning/` | **Decision rationale** — dlaczego wybrano X zamiast Y (trade-offs, architektura) |
-| `Ideas/` | Pomysły na projekty, produkty, eksperymenty |
-| `Relationships/` | Notatki o relacjach, randkach, znajomościach |
+| `Design/` | UI patterns, typography principles, token architecture |
+| `Code/` | CSS tricks, JS patterns, snippets |
+| `Tools/` | MCPs, plugins, tools, configurations |
+| `Health/` | Weight, training, health, supplements |
+| `Finance/` | Rates, expenses, investments, taxes |
+| `Career/` | CV, career decisions, writing preferences |
+| `Problems/` | Problem-solution notes (solved problems) |
+| `Synthesis/` | **Synthesis from conversations** — compounding answers to non-trivial questions |
+| `Reasoning/` | **Decision rationale** — why X was chosen over Y (trade-offs, architecture) |
+| `Ideas/` | Ideas for projects, products, experiments |
+| `Relationships/` | Notes on relationships, dating, acquaintances |
 
-## Zasady zapisu (dla AI agenta)
+## Writing rules (for AI agent)
 
-### Routing wiedzy — który folder 3 Atlas/?
+### Knowledge routing — which folder in 3 Atlas/?
 
-Nie każda wiedza to "problem-solution". Jedna sesja może wygenerować 3+ notatki w różnych folderach.
+Not every piece of knowledge is a "problem-solution". One session can generate 3+ notes in different folders.
 
-| Folder | Gdy... | Frontmatter `type:` | Przykład |
+| Folder | When... | Frontmatter `type:` | Example |
 |---|---|---|---|
-| `Problems/` | Konkretny bug/issue **+ kontekst jak powstał** | `problem-solution` | "Safari flexbox wrap bug — min-width:0 po 2h debugowania" |
-| `Code/` | **Reusable snippet/pattern** bez specyficznego buga | `pattern` | "CSS clamp() pattern for fluid typography" |
-| `Design/` | **Zasada wizualna / token / guideline** | `design-principle` | "8px grid + 1.333 modular scale" |
-| `Tools/` | **Narzędzie/MCP/plugin** — co, setup, use case | `tool-note` | "Chrome DevTools MCP — remote debug setup" |
-| `Ideas/` | **Pomysł na przyszłość**, niezrobione | `idea` | "Skill generator z GitHub repos" |
-| `Synthesis/` | **Synteza 3+ notatek** w odpowiedzi na nietrywialne pytanie | `synthesis` | "Comparison: graphify vs intelligence vs RuFlo" |
-| `Reasoning/` | **Dlaczego X zamiast Y** — trade-offs, architektura, design rationale | `reasoning` | "Why shadow layer over patches for RuFlo extensions" |
-| `Career/` | Decyzje zawodowe, CV, rationale | `decision` / `rationale` | (do Decisions.md) |
-| `Health/` `Finance/` `Relationships/` | Fakty osobiste | `fact` | Waga, stawka, nota o osobie |
-| `0 Inbox/` | **Confidence < 70%** — nie wiem gdzie | `unsorted` | Gdy notatka pasuje do kilku folderów niejednoznacznie |
+| `Problems/` | Specific bug/issue **+ context of how it arose** | `problem-solution` | "Safari flexbox wrap bug — min-width:0 after 2h debugging" |
+| `Code/` | **Reusable snippet/pattern** without a specific bug context | `pattern` | "CSS clamp() pattern for fluid typography" |
+| `Design/` | **Visual principle / token / guideline** | `design-principle` | "8px grid + 1.333 modular scale" |
+| `Tools/` | **Tool/MCP/plugin** — what, setup, use case | `tool-note` | "Chrome DevTools MCP — remote debug setup" |
+| `Ideas/` | **Future idea**, not done yet | `idea` | "Skill generator from GitHub repos" |
+| `Synthesis/` | **Synthesis of 3+ notes** in response to a non-trivial question | `synthesis` | "Comparison: graphify vs intelligence vs RuFlo" |
+| `Reasoning/` | **Why X instead of Y** — trade-offs, architecture, design rationale | `reasoning` | "Why shadow layer over patches for RuFlo extensions" |
+| `Career/` | Career decisions, CV, rationale | `decision` / `rationale` | (goes to Decisions.md) |
+| `Health/` `Finance/` `Relationships/` | Personal facts | `fact` | Weight, rate, note about a person |
+| `0 Inbox/` | **Confidence < 70%** — unsure where it belongs | `unsorted` | When a note fits multiple folders ambiguously |
 
-### Zasada splittingu — jedna sesja → wiele folderów
+### Splitting rule — one session → multiple folders
 
-Rozwiązanie jednego problemu często produkuje wiedzę w kilku folderach. **Nie pakuj wszystkiego do jednego pliku w Problems/**.
+Solving one problem often produces knowledge across several folders. **Don't pack everything into a single file in Problems/**.
 
-**Przykład 1:** "CSS clamp() breaks on ultrawide, fixed by capping at max-width"
-- `Problems/CSS clamp ultrawide bug.md` — pełen kontekst buga i jak go znalazłeś
-- `Code/CSS clamp fluid typography pattern.md` — czysty reusable snippet (bez buga, tylko "jak używać")
-- Oba linkują się [[wikilinkami]] w obie strony
+**Example 1:** "CSS clamp() breaks on ultrawide, fixed by capping at max-width"
+- `Problems/CSS clamp ultrawide bug.md` — full bug context and how you found it
+- `Code/CSS clamp fluid typography pattern.md` — clean reusable snippet (no bug, just "how to use")
+- Both cross-link via [[wikilinks]]
 
-**Przykład 2:** "Zbudowałem design system z 8px grid"
-- `Design/8px grid system.md` — zasada: czemu 8px, kiedy stosować
-- `Problems/Grid inconsistency in Atlas DS.md` — konkretne challenges które pokonałeś
-- `Code/CSS spacing scale tokens.md` — snippet tokenów
+**Example 2:** "Built a design system with 8px grid"
+- `Design/8px grid system.md` — principle: why 8px, when to apply
+- `Problems/Grid inconsistency in Atlas DS.md` — specific challenges you overcame
+- `Code/CSS spacing scale tokens.md` — token snippet
 
-**Reguła:** jeśli jedna wiedza pasuje do kilku folderów z confidence >70% każdy → zrób split. Primary note w najbardziej specyficznym folderze, secondary notes linkują do niej.
+**Rule:** if one piece of knowledge fits multiple folders with confidence >70% each → do a split. Primary note in the most specific folder, secondary notes link back to it.
 
-### Synthesis — zamknij pętlę wiedzy (Karpathy LLM Wiki pattern)
+### Synthesis — close the knowledge loop (Karpathy LLM Wiki pattern)
 
-Claude często odpowiada na pytania syntezując wiedzę z kilku notatek. **Te odpowiedzi znikają w terminalu** — następnym razem Claude wymyśli je od zera. To marnotrawstwo.
+Claude often answers questions by synthesizing knowledge from several notes. **These answers disappear in the terminal** — next time Claude will reconstruct them from scratch. That's waste.
 
-**Reguła: gdy user pyta pytanie które wymaga syntezy 3+ notatek** (porównanie, analiza, "jak X ma się do Y", "podsumuj mi Z") **i odpowiedź jest nietrywialna** (>200 słów, non-obvious insight) → **zapisz ją** do `3 Atlas/Synthesis/[topic].md`.
+**Rule: when the user asks a question that requires synthesizing 3+ notes** (comparison, analysis, "how does X relate to Y", "summarize Z") **and the answer is non-trivial** (>200 words, non-obvious insight) → **save it** to `3 Atlas/Synthesis/[topic].md`.
 
 **Template:**
 ```markdown
@@ -85,148 +85,148 @@ tags: [domain tags]
 quality: high/normal
 ---
 
-## Pytanie
+## Question
 [Rephrased question]
 
-## Synteza
-[3–6 akapitów — destylacja, nie copy-paste z sources]
+## Synthesis
+[3–6 paragraphs — distillation, not copy-paste from sources]
 
-## Kluczowe insighty
+## Key insights
 - [non-obvious takeaway 1]
 - [non-obvious takeaway 2]
 
-## Źródła
-- [[Note A]] — [co stamtąd wzięto]
+## Sources
+- [[Note A]] — [what was taken from it]
 - [[Note B]] — [...]
 ```
 
-**Kiedy NIE zapisywać synthesis:**
-- Trivial lookup ("gdzie jest X file") — pytania factual bez syntezy
-- Single-source answer — to belongs to original note, nie nowa synteza
-- Ad-hoc diagnostyka (debug, walkthrough)
+**When NOT to save a synthesis:**
+- Trivial lookup ("where is X file") — factual questions without synthesis
+- Single-source answer — that belongs in the original note, not a new synthesis
+- Ad-hoc diagnostics (debug, walkthrough)
 
-**Jak odzyskać synthesis przy następnym pytaniu:**
-Gdy user pyta coś podobnego → najpierw `glob 3 Atlas/Synthesis/*.md` + match. Jeśli istnieje → daj tę synthesis + "już mamy to w Synthesis/, pozwól że sprawdzę czy dalej aktualne". Aktualizuj jeśli sources się zmieniły.
+**How to retrieve synthesis on the next question:**
+When the user asks something similar → first `glob 3 Atlas/Synthesis/*.md` + match. If it exists → provide that synthesis + "we already have this in Synthesis/, let me check if it's still current". Update if sources have changed.
 
-### Kiedy zapisywać (triggery)
+### When to save (triggers)
 
-- User rozwiązał problem → **rozważ split Problems/ + Code/** (nie tylko Problems!)
-- User wspomina nowy snippet/pattern bez kontekstu buga → **Code/** (nie Problems!)
-- User ustala zasadę wizualną → **Design/** (nie Problems!)
-- User wspomina narzędzie/MCP/plugin → **Tools/**
-- User wspomina pomysł "byłoby fajnie gdyby..." → **Ideas/**
-- User wspomina osobę 2. raz → **People/**
-- User podejmuje decyzję ("zdecydowałem", "idziemy z") → `Career/Decisions.md`
-- User podaje fakt o sobie → odpowiednia kategoria `Health/Finance/Career/`
-- User mówi /tldr → append do daily note + per-topic notes we właściwych folderach
-- **Ambiguous (confidence <70%)** → `0 Inbox/` z frontmatter `type: unsorted` + `proposed_folders: [X, Y]`
+- User solved a problem → **consider split Problems/ + Code/** (not just Problems!)
+- User mentions a new snippet/pattern without bug context → **Code/** (not Problems!)
+- User establishes a visual principle → **Design/** (not Problems!)
+- User mentions a tool/MCP/plugin → **Tools/**
+- User mentions an idea "it would be cool if..." → **Ideas/**
+- User mentions a person a 2nd time → **People/**
+- User makes a decision ("I decided", "we're going with") → `Career/Decisions.md`
+- User states a personal fact → appropriate category `Health/Finance/Career/`
+- User says /tldr → append to daily note + per-topic notes in appropriate folders
+- **Ambiguous (confidence <70%)** → `0 Inbox/` with frontmatter `type: unsorted` + `proposed_folders: [X, Y]`
 
-### Jak zapisywać
-1. Zawsze dodaj 2-5 tagów (Ty wybierasz, nie user)
-2. Linkuj powiązane notatki [[wikilinkami]] — ZAWSZE do primary note jeśli split
-3. Nie duplikuj — sprawdź czy notatka już istnieje, jeśli tak → aktualizuj
-4. Używaj templates z `Templates/`
-5. Tytuły piszesz jak search query: "Problem - Safari flexbox wrap" nie "Bug"
-6. Frontmatter: `type`, `created`, `tags` minimum. Dla Problems/ i rationale: + `quality`
-7. Jeśli niepewny folderu — **do Inbox z proposed_folders**, nie zgaduj
+### How to save
+1. Always add 2-5 tags (you choose, not the user)
+2. Link related notes via [[wikilinks]] — ALWAYS to the primary note if split
+3. No duplicates — check if note already exists, if so → update it
+4. Use templates from `Templates/`
+5. Titles written as search queries: "Problem - Safari flexbox wrap" not "Bug"
+6. Frontmatter: `type`, `created`, `tags` minimum. For Problems/ and rationale: + `quality`
+7. If unsure about folder — **go to Inbox with proposed_folders**, don't guess
 
-### Jak szukać
-- Pytanie o osobę → szukaj w `4 People/`
-- Pytanie o narzędzie → szukaj w `3 Atlas/Tools/`
-- Pytanie "czy kiedyś rozwiązywałem...?" → szukaj w `3 Atlas/Problems/`
-- Pytanie o projekt → szukaj w `2 Efforts/` i `Archive/`
-- Pytanie o fakt osobisty → szukaj w `3 Atlas/Health/`, `Finance/`, `Career/`
-- Pytanie ogólne → przeszukaj cały vault
+### How to search
+- Question about a person → search in `4 People/`
+- Question about a tool → search in `3 Atlas/Tools/`
+- Question "did I ever solve...?" → search in `3 Atlas/Problems/`
+- Question about a project → search in `2 Efforts/` and `Archive/`
+- Question about a personal fact → search in `3 Atlas/Health/`, `Finance/`, `Career/`
+- General question → search entire vault
 
-### Czego NIE robić
-- NIE pytaj usera o tagi — sam je dobieraj
-- NIE pytaj usera o folder — **ale gdy confidence <70%, użyj `0 Inbox/` zamiast zgadywać**
-- NIE pakuj wszystkich learningów do Problems/ — rozważ split Code/Design/Ideas
-- NIE twórz notatki o osobie przy 1. wzmiance — czekaj na 2.
-- NIE zapisuj rzeczy efemerycznych (temp debug, jednorazowe pytania)
-- NIE duplikuj info które jest w git history lub w kodzie
-- NIE twórz pojedynczej notatki gdy wiedza naturalnie rozdziela się na kilka folderów
+### What NOT to do
+- DON'T ask user about tags — choose them yourself
+- DON'T ask user about folder — **but when confidence <70%, use `0 Inbox/` instead of guessing**
+- DON'T pack all learnings into Problems/ — consider split Code/Design/Ideas
+- DON'T create a note about a person on 1st mention — wait for 2nd
+- DON'T save ephemeral things (temp debug, one-time questions)
+- DON'T duplicate info that's in git history or in code
+- DON'T create a single note when knowledge naturally splits across multiple folders
 
 ## Quality signals (frontmatter)
 
-Każdy `problem-solution` i `rationale` MUSI mieć `quality` w frontmatter. To jest kluczowy sygnał dla RuFlo intelligence layer — decyduje czy pattern zostanie zachowany długoterminowo i jak mocno będzie ważony w scoringu.
+Every `problem-solution` and `rationale` MUST have `quality` in frontmatter. This is a key signal for the RuFlo intelligence layer — it decides whether a pattern will be retained long-term and how strongly it will be weighted in scoring.
 
-### Jak oznaczać
+### How to tag
 
-- `quality: high` — **non-obvious solution po walce**. Przetrwa 30d cutoff, boost +0.25 w scoringu, ładowany na każdym session-start.
-  - Sygnały: user frustrował się, 3+ próby, rollback, "wreszcie działa", breakthrough commit po loopie.
-  - Przykład: `Safari flexbox bug rozwiązany przez min-width:0 po 2h debugowania`.
+- `quality: high` — **non-obvious solution after a struggle**. Survives the 30d cutoff, boost +0.25 in scoring, loaded on every session-start.
+  - Signals: user was frustrated, 3+ attempts, rollback, "finally works", breakthrough commit after a loop.
+  - Example: `Safari flexbox bug solved by min-width:0 after 2h debugging`.
 
-- `quality: normal` — **straightforward, znane rozwiązanie**. Domyślnie. Widoczne przez 30 dni, standard scoring.
-  - Sygnały: problem rozwiązany bez walki, znana technika, "ok, działa".
+- `quality: normal` — **straightforward, known solution**. Default. Visible for 30 days, standard scoring.
+  - Signals: problem solved without struggle, known technique, "ok, works".
 
-- `quality: low` — **trivia, edge case, mało wartościowe**. **Wykluczone z ładowania** do intelligence layer.
-  - Sygnały: jednorazowy fix, nigdy nie powtórzy się, kosmetyka.
+- `quality: low` — **trivia, edge case, low value**. **Excluded from loading** into intelligence layer.
+  - Signals: one-time fix, will never recur, cosmetic.
 
-### Zasada
-Jeśli user pokonał frustrację → ZAWSZE `quality: high`. Lepsza false positive niż stracić cenny pattern.
+### Rule
+If the user overcame frustration → ALWAYS `quality: high`. Better false positive than losing a valuable pattern.
 
-## Wikilinks (krytyczne dla graphify)
+## Wikilinks (critical for graphify)
 
-Graphify (`/graphify`) buduje graf wiedzy z `[[wikilinks]]`. Im więcej sensownych linków, tym lepszy pattern matching w RuFlo. Obecny graf: 185 nodów, 238 edges.
+Graphify (`/graphify`) builds a knowledge graph from `[[wikilinks]]`. The more meaningful links, the better pattern matching in RuFlo. Current graph: 185 nodes, 238 edges.
 
-### Zasady linkowania
+### Linking rules
 
-- Każda notatka ma **minimum 2 wikilinks** w body
-- Problem → linkuj do [[Tool]] / [[Technique]] która rozwiązuje, do [[Effort]] w ramach którego powstał
-- Decision → linkuj do [[Rationale]] (jeśli istnieje) i [[Effort]] którego dotyczy
-- Effort → linkuj do [[MOC]], [[People]] zaangażowanych, [[Tools]] używanych
-- Person → linkuj do [[Organizations]], [[Efforts]], innych [[People]] powiązanych
-- Rationale → linkuj do [[Decision]] i [[Effort]] których dotyczy
+- Every note has **minimum 2 wikilinks** in body
+- Problem → link to [[Tool]] / [[Technique]] that solves it, to [[Effort]] it arose within
+- Decision → link to [[Rationale]] (if it exists) and [[Effort]] it concerns
+- Effort → link to [[MOC]], [[People]] involved, [[Tools]] used
+- Person → link to [[Organizations]], [[Efforts]], other related [[People]]
+- Rationale → link to [[Decision]] and [[Effort]] it concerns
 
 ### Orphan notes
-Jeśli nowa notatka nie ma do czego linkować → zastanów się czy w ogóle potrzebna. Orphan = niewidoczny w graphify = niedostępny dla intelligence layer.
+If a new note has nothing to link to → consider whether it's needed at all. Orphan = invisible in graphify = unavailable to intelligence layer.
 
 ## Graphify refresh
 
-Graf wiedzy (`graphify-out/graph.json`) musi być aktualny — używany przez RuFlo do rankowania patterns w czasie rzeczywistym.
+Knowledge graph (`graphify-out/graph.json`) must be up to date — used by RuFlo for ranking patterns in real time.
 
-### Kiedy odświeżać
+### When to refresh
 
-- **Po dodaniu 5+ nowych notatek** w `3 Atlas/` lub `2 Efforts/`
-- **Tygodniowo** — w ramach `/weekly-review`
-- **Po dużych refactorach** vault (merge notatek, przenoszenie między folderami)
-- **Po masowym dodaniu [[wikilinks]]** do istniejących notatek
+- **After adding 5+ new notes** in `3 Atlas/` or `2 Efforts/`
+- **Weekly** — as part of `/weekly-review`
+- **After major vault refactors** (merging notes, moving between folders)
+- **After bulk-adding [[wikilinks]]** to existing notes
 
-### Jak
+### How
 ```
 /graphify
 ```
-Koszt: ~$2-5 LLM za full refresh (100+ files). Incremental nie jest obecnie wspierany — zawsze full scan.
+Cost: ~$2-5 LLM per full refresh (100+ files). Incremental not currently supported — always full scan.
 
 ### Staleness check
-Sprawdź mtime `~/Desktop/Labirynt/graphify-out/graph.json`. Jeśli >7 dni — odśwież.
+Check mtime of `~/Desktop/Labirynt/graphify-out/graph.json`. If >7 days — refresh.
 
 ## RuFlo Integration
 
-Vault jest źródłem permanentnej wiedzy, ale RuFlo cache (`~/.claude-flow/data/`) to runtime index dla intelligence layer.
+Vault is the permanent knowledge source, but the RuFlo cache (`~/.claude-flow/data/`) is the runtime index for the intelligence layer.
 
 ### Flow
 
-1. **Session-start**: loader czyta z vault:
+1. **Session-start**: loader reads from vault:
    - `2 Efforts/` (active projects, 90d)
-   - `3 Atlas/Problems/` (last 30d + wszystkie `quality: high`)
-   - `3 Atlas/Code/` — reusable patterns (wszystkie, bo niewiele)
-   - `3 Atlas/Design/` — design principles (wszystkie)
+   - `3 Atlas/Problems/` (last 30d + all `quality: high`)
+   - `3 Atlas/Code/` — reusable patterns (all, folder stays small)
+   - `3 Atlas/Design/` — design principles (all)
    - `3 Atlas/Career/Decisions.md` (recent)
-   - `graphify-out/graph.json` (~650 nodów, ~900 edges)
-2. Intelligence builduje `graph-state.json` z realnych edges graphify + lokalne tag-based
+   - `graphify-out/graph.json` (~650 nodes, ~900 edges)
+2. Intelligence builds `graph-state.json` from real graphify edges + local tag-based
 3. PageRank + quality + type + recency → `ranked-context.json`
-4. Podczas pracy: każdy user prompt triggeruje lookup w ranked-context → top-5 relevant patterns idzie do LLM
+4. During work: each user prompt triggers lookup in ranked-context → top-5 relevant patterns go to LLM
 
-### Implikacje dla zapisu
+### Implications for saving
 
-- Po rozwiązaniu problemu: ZAPISZ do `3 Atlas/Problems/` z poprawnym `quality:`, a nie tylko do daily note
-- Bez `quality:` frontmatter = pattern traktowany jako `normal` (średni priorytet)
-- Bez wikilinków = niewidoczny w graphify = mniejsza szansa że zostanie załadowany do intelligence
+- After solving a problem: SAVE to `3 Atlas/Problems/` with correct `quality:`, not just to daily note
+- Without `quality:` frontmatter = pattern treated as `normal` (medium priority)
+- Without wikilinks = invisible in graphify = lower chance of being loaded into intelligence
 
-### Architektura
-- **Obsidian** = permanent source of truth (PARA: nigdy nie usuwamy, archiwizujemy w `Archive/`)
-- **Graphify** = pre-computed knowledge graph (tygodniowy refresh)
-- **RuFlo cache** = volatile runtime index (przebudowywany na każdym session-start)
-- **Claude** = execution layer (dostaje top-K patterns per prompt)
+### Architecture
+- **Obsidian** = permanent source of truth (PARA: never delete, archive in `Archive/`)
+- **Graphify** = pre-computed knowledge graph (weekly refresh)
+- **RuFlo cache** = volatile runtime index (rebuilt on every session-start)
+- **Claude** = execution layer (receives top-K patterns per prompt)

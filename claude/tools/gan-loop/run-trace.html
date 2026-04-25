@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -125,14 +125,14 @@ h1 { font-size: 22px; color: #fff; margin-bottom: 4px; }
     </div>
     <div class="step-body">
       <div class="panel">
-        <div class="panel-title">Zadanie</div>
-        <p>Tagline dla CLI tool kompresującego terminal output o 80% (Rust). Audience: senior engineers.</p>
+        <div class="panel-title">Task</div>
+        <p>Tagline for a CLI tool that compresses terminal output by 80% (Rust). Audience: senior engineers.</p>
         <ul style="margin: 10px 0 0 16px; color: #888; font-size: 12px; line-height: 1.9;">
-          <li>Max 8 słów</li>
-          <li>Bez em dashy</li>
-          <li>Bez puns</li>
-          <li>Musi zawierać konkretny benefit (czas lub tokeny)</li>
-          <li>Zakaz: "powerful", "fast", "simple", "better"</li>
+          <li>Max 8 words</li>
+          <li>No em dashes</li>
+          <li>No puns</li>
+          <li>Must include a concrete benefit (time or tokens)</li>
+          <li>Banned: "powerful", "fast", "simple", "better"</li>
         </ul>
       </div>
     </div>
@@ -141,21 +141,21 @@ h1 { font-size: 22px; color: #fff; margin-bottom: 4px; }
   <div class="step info" id="A2">
     <div class="step-header" onclick="toggle('A2')">
       <span class="step-label">Rubric Generator</span>
-      <span class="step-title">5 kryteriów specyficznych dla tagline copy</span>
+      <span class="step-title">5 criteria specific to tagline copy</span>
       <span class="step-badge sb-info">output_type: text/copy</span>
       <span class="chevron">▼</span>
     </div>
     <div class="step-body">
       <div class="panel">
-        <div class="panel-title">Kryteria (domain: copy)</div>
+        <div class="panel-title">Criteria (domain: copy)</div>
         <table class="score-table">
-          <thead><tr><th>Kryterium</th><th>Waga</th><th>Co mierzy</th></tr></thead>
+          <thead><tr><th>Criterion</th><th>Weight</th><th>What it measures</th></tr></thead>
           <tbody>
-            <tr><td>Word Count Compliance</td><td>0.20</td><td>≤8 słów</td></tr>
-            <tr><td>Banned Element Avoidance</td><td>0.25</td><td>Brak em dashy, puns, generic adjectives</td></tr>
-            <tr><td>Concrete Benefit Specificity</td><td>0.30</td><td>Konkretna liczba lub observable outcome</td></tr>
+            <tr><td>Word Count Compliance</td><td>0.20</td><td>≤8 words</td></tr>
+            <tr><td>Banned Element Avoidance</td><td>0.25</td><td>No em dashes, puns, generic adjectives</td></tr>
+            <tr><td>Concrete Benefit Specificity</td><td>0.30</td><td>Concrete number or observable outcome</td></tr>
             <tr><td>Senior Engineer Audience Fit</td><td>0.15</td><td>Peer-level technical reference</td></tr>
-            <tr><td>Tagline Distinctiveness</td><td>0.10</td><td>Nie przenośne na inny tool</td></tr>
+            <tr><td>Tagline Distinctiveness</td><td>0.10</td><td>Not transferable to another tool</td></tr>
           </tbody>
         </table>
       </div>
@@ -181,9 +181,9 @@ h1 { font-size: 22px; color: #fff; margin-bottom: 4px; }
       </div>
 
       <div class="panel">
-        <div class="panel-title">Codex — wyniki per kryterium</div>
+        <div class="panel-title">Codex — scores per criterion</div>
         <table class="score-table">
-          <thead><tr><th>Kryterium</th><th>Wynik</th><th>Waga</th><th>Weighted</th></tr></thead>
+          <thead><tr><th>Criterion</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead>
           <tbody>
             <tr><td>Word Count Compliance</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.20</td><td>2.00</td></tr>
             <tr><td>Banned Element Avoidance</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.25</td><td>2.50</td></tr>
@@ -197,29 +197,29 @@ h1 { font-size: 22px; color: #fff; margin-bottom: 4px; }
 
       <div class="panel">
         <div class="panel-title">Codex findings</div>
-        <div class="issue"><span class="itag it-none">BRAK</span>Żadnych krytycznych ani major issues. Threshold osiągnięty w 1 iteracji.</div>
-        <div class="issue"><span class="itag it-minor">NOTE</span><strong>Concrete Benefit 9/10:</strong> "80% less terminal output" — figura weryfikowalna. Nie znamy sample size ani metodologii. Nie blokuje — brief nie wymaga sourced claim.</div>
+        <div class="issue"><span class="itag it-none">NONE</span>No critical or major issues. Threshold reached in 1 iteration.</div>
+        <div class="issue"><span class="itag it-minor">NOTE</span><strong>Concrete Benefit 9/10:</strong> "80% less terminal output" — verifiable figure. Sample size and methodology unknown. Non-blocking — brief does not require a sourced claim.</div>
       </div>
     </div>
   </div>
 
   <div class="step pass" id="A4">
     <div class="step-header" onclick="toggle('A4')">
-      <span class="step-label">Wynik końcowy</span>
+      <span class="step-label">Final result</span>
       <span class="step-title">Git commit — PASS</span>
       <span class="step-badge sb-pass">COMMITTED</span>
       <span class="chevron">▼</span>
     </div>
     <div class="step-body">
       <div class="panel">
-        <div class="panel-title">Co trafiło do gita</div>
+        <div class="panel-title">What was committed to git</div>
         <div class="code-block">runs/20260421-142257-test-simple-tagline/
   draft.md              ← "80% less terminal output. Zero grep chains."
   feedback/feedback-001.md  ← Codex scores + findings
-  generator-state.md    ← co generator wiedział
+  generator-state.md    ← what the generator knew
   run-summary.md        ← PASS, 9.45/10, 1 iter
 rubrics/
-  test-simple-tagline-rubric.md  ← reużywalny rubric</div>
+  test-simple-tagline-rubric.md  ← reusable rubric</div>
       </div>
     </div>
   </div>
@@ -242,16 +242,16 @@ rubrics/
     </div>
     <div class="step-body">
       <div class="panel">
-        <div class="panel-title">Zadanie</div>
-        <p>TypeScript <code>debounce</code> z <code>.cancel()</code> i <code>.flush()</code> metodami.</p>
+        <div class="panel-title">Task</div>
+        <p>TypeScript <code>debounce</code> with <code>.cancel()</code> and <code>.flush()</code> methods.</p>
         <ul style="margin: 10px 0 0 16px; color: #888; font-size: 12px; line-height: 1.9;">
-          <li>Generic: <code>&lt;A extends unknown[], R&gt;</code> — pełna type inference</li>
-          <li><code>.cancel()</code> — czyści pending bez wywołania</li>
-          <li><code>.flush()</code> — wywołuje natychmiast jeśli pending, returns <code>R | undefined</code></li>
+          <li>Generic: <code>&lt;A extends unknown[], R&gt;</code> — full type inference</li>
+          <li><code>.cancel()</code> — clears pending without invoking</li>
+          <li><code>.flush()</code> — invokes immediately if pending, returns <code>R | undefined</code></li>
           <li>Trailing-edge only</li>
           <li>No stale closure (React event handlers)</li>
-          <li>Brak external dependencies</li>
-          <li>Named export + inline <code>// --- tests ---</code> z Node.js assert</li>
+          <li>No external dependencies</li>
+          <li>Named export + inline <code>// --- tests ---</code> with Node.js assert</li>
         </ul>
       </div>
     </div>
@@ -260,21 +260,21 @@ rubrics/
   <div class="step info" id="B2">
     <div class="step-header" onclick="toggle('B2')">
       <span class="step-label">Rubric Generator</span>
-      <span class="step-title">6 kryteriów specyficznych dla TS utility function</span>
+      <span class="step-title">6 criteria specific to TS utility function</span>
       <span class="step-badge sb-info">output_type: code</span>
       <span class="chevron">▼</span>
     </div>
     <div class="step-body">
       <div class="panel">
-        <div class="panel-title">Kryteria (domain: code)</div>
+        <div class="panel-title">Criteria (domain: code)</div>
         <table class="score-table">
-          <thead><tr><th>Kryterium</th><th>Waga</th><th>Co mierzy</th></tr></thead>
+          <thead><tr><th>Criterion</th><th>Weight</th><th>What it measures</th></tr></thead>
           <tbody>
             <tr><td>Generic Type Safety</td><td>0.20</td><td>Zero any, full callsite inference</td></tr>
-            <tr><td>Cancel and Flush Semantics</td><td>0.25</td><td>Poprawne zachowanie .cancel() i .flush()</td></tr>
-            <tr><td>Stale Closure Prevention</td><td>0.20</td><td>latestArgs mutable ref — nie stale args</td></tr>
+            <tr><td>Cancel and Flush Semantics</td><td>0.25</td><td>Correct behaviour of .cancel() and .flush()</td></tr>
+            <tr><td>Stale Closure Prevention</td><td>0.20</td><td>latestArgs mutable ref — not stale args</td></tr>
             <tr><td>Test Coverage</td><td>0.20</td><td>Executable inline tests: delay, cancel, flush, coalescing</td></tr>
-            <tr><td>Trailing-Edge Timing Correctness</td><td>0.10</td><td>Jeden call na trailing edge, nie leading</td></tr>
+            <tr><td>Trailing-Edge Timing Correctness</td><td>0.10</td><td>One call on trailing edge, not leading</td></tr>
             <tr><td>Export and Dependency Constraints</td><td>0.05</td><td>Named export, zero external deps</td></tr>
           </tbody>
         </table>
@@ -296,9 +296,9 @@ rubrics/
       </div>
 
       <div class="panel">
-        <div class="panel-title">Codex — wyniki per kryterium</div>
+        <div class="panel-title">Codex — scores per criterion</div>
         <table class="score-table">
-          <thead><tr><th>Kryterium</th><th>Wynik</th><th>Waga</th><th>Weighted</th></tr></thead>
+          <thead><tr><th>Criterion</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead>
           <tbody>
             <tr><td>Generic Type Safety</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.20</td><td>2.00</td></tr>
             <tr><td>Cancel and Flush Semantics</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.25</td><td>2.50</td></tr>
@@ -313,8 +313,8 @@ rubrics/
 
       <div class="panel">
         <div class="panel-title">Codex findings</div>
-        <div class="issue"><span class="itag it-critical">KRYTYCZNE</span><strong>Test Coverage 4/10 — Markdown code fence:</strong> draft.md owinięty w <code>```ts ... ```</code>. Plik nie jest wykonywalny jako TypeScript/Node.js. Rubric wymaga runnable assert block. Fix: usuń fences, zostaw raw TS source.</div>
-        <div class="issue"><span class="itag it-none">RESZTA</span>Logika implementacji poprawna — generic types, cancel/flush, stale closure, timing — wszystko 10/10. Jedyny problem to format pliku.</div>
+        <div class="issue"><span class="itag it-critical">CRITICAL</span><strong>Test Coverage 4/10 — Markdown code fence:</strong> draft.md wrapped in <code>```ts ... ```</code>. File is not executable as TypeScript/Node.js. Rubric requires a runnable assert block. Fix: remove fences, leave raw TS source.</div>
+        <div class="issue"><span class="itag it-none">REST</span>Implementation logic correct — generic types, cancel/flush, stale closure, timing — all 10/10. Only issue is file format.</div>
       </div>
     </div>
   </div>
@@ -333,14 +333,14 @@ rubrics/
       </div>
 
       <div class="panel">
-        <div class="panel-title">Co generator zmienił</div>
-        <div class="issue"><span class="itag it-none">FIX</span>Usunięto Markdown code fences. draft.md = raw TypeScript source, bezpośrednio wykonywalny przez Node.js/ts-node.</div>
+        <div class="panel-title">What the generator changed</div>
+        <div class="issue"><span class="itag it-none">FIX</span>Removed Markdown code fences. draft.md = raw TypeScript source, directly executable by Node.js/ts-node.</div>
       </div>
 
       <div class="panel">
-        <div class="panel-title">Codex — wyniki per kryterium</div>
+        <div class="panel-title">Codex — scores per criterion</div>
         <table class="score-table">
-          <thead><tr><th>Kryterium</th><th>Wynik</th><th>Δ vs iter1</th><th>Waga</th><th>Weighted</th></tr></thead>
+          <thead><tr><th>Criterion</th><th>Score</th><th>Δ vs iter1</th><th>Weight</th><th>Weighted</th></tr></thead>
           <tbody>
             <tr><td>Generic Type Safety</td><td><span class="sc sc10">10</span></td><td>—</td><td>0.20</td><td>2.00</td></tr>
             <tr><td>Cancel and Flush Semantics</td><td><span class="sc sc10">10</span></td><td>—</td><td>0.25</td><td>2.50</td></tr>
@@ -355,7 +355,7 @@ rubrics/
 
       <div class="panel">
         <div class="panel-title">Remaining notes (non-blocking)</div>
-        <div class="issue"><span class="itag it-minor">NOTE</span><strong>Test Coverage 9/10:</strong> Fake-timer harness custom zamiast sinon/@sinonjs. Akceptowalne (brief: no external deps). Wymaga manualnej weryfikacji poprawności fake-timer.</div>
+        <div class="issue"><span class="itag it-minor">NOTE</span><strong>Test Coverage 9/10:</strong> Custom fake-timer harness instead of sinon/@sinonjs. Acceptable (brief: no external deps). Requires manual verification of fake-timer correctness.</div>
       </div>
 
       <div class="panel">
@@ -408,14 +408,14 @@ export function debounce&lt;A extends unknown[], R&gt;(
 
   <div class="step pass" id="B5">
     <div class="step-header" onclick="toggle('B5')">
-      <span class="step-label">Wynik końcowy</span>
+      <span class="step-label">Final result</span>
       <span class="step-title">Git commit — PASS</span>
       <span class="step-badge sb-pass">COMMITTED</span>
       <span class="chevron">▼</span>
     </div>
     <div class="step-body">
       <div class="panel">
-        <div class="panel-title">Co trafiło do gita</div>
+        <div class="panel-title">What was committed to git</div>
         <div class="code-block">runs/20260421-142741-test-complex-debounce/
   draft.md                   ← raw TypeScript source (184 lines)
   feedback/feedback-001.md   ← iter1: REJECT 8.80 (fence issue)
@@ -423,7 +423,7 @@ export function debounce&lt;A extends unknown[], R&gt;(
   generator-state.md         ← iter2: fix description
   run-summary.md             ← PASS, 9.80/10, 2 iters
 rubrics/
-  test-complex-debounce-rubric.md  ← reużywalny rubric</div>
+  test-complex-debounce-rubric.md  ← reusable rubric</div>
       </div>
     </div>
   </div>

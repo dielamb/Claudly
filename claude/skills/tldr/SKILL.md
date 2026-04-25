@@ -19,7 +19,7 @@ When the user invokes /tldr, do a FULL extraction. Not a summary — a knowledge
 Read the FULL conversation. For each distinct topic/problem worked on, identify:
 
 **Frustration signals:** repeated attempts, rollbacks, "nie tak", "kurwa", "cofamy", "znowu", negative language, same file edited 3+ times
-**Breakthrough signals:** "tak", "działa", "właśnie o to chodzi", forward movement after struggle, commit after loop, user approval
+**Breakthrough signals:** "tak"/"yes", "działa"/"works", "właśnie o to chodzi"/"that's exactly it", forward movement after struggle, commit after loop, user approval
 
 Map each topic to one of:
 - `quality: high` — struggled then solved, non-obvious solution, worth remembering
@@ -41,7 +41,7 @@ Match commits to topics. The commit AFTER a frustration loop = `breakthrough_com
 - If YES: update `quality:` and `breakthrough_commit:` in frontmatter only
 - If NO: create new file using `tpl-problem-solution.md` template with filled `quality:` and `breakthrough_commit:`
 
-**Decision made** (signals: "idziemy z X", "zdecydowałem", "zostaje", "usuwamy"):
+**Decision made** (signals: "we're going with X", "I decided", "it stays", "we're removing"):
 - Append to `~/Desktop/Labirynt/3 Atlas/Career/Decisions.md`
 
 **New tool/pattern discovered:**
@@ -56,13 +56,13 @@ Match commits to topics. The commit AFTER a frustration loop = `breakthrough_com
 ## Step 4: Write daily note summary
 
 Find or create `~/Desktop/Labirynt/1 Calendar/YYYY-MM-DD.md`.
-Append under `## Sesje z Claude`:
+Append under `## Claude Sessions`:
 
 ```markdown
 ### Session [HH:MM]
-**Projekt:** [main project]
-**Zrobiono:** [2-4 bullet points max]
-**Zapisano:** [list of files created/updated in vault — filenames only]
+**Project:** [main project]
+**Done:** [2-4 bullet points max]
+**Saved:** [list of files created/updated in vault — filenames only]
 ```
 
 Keep under 100 words. The details are in the individual notes.
@@ -75,7 +75,7 @@ Tell the user:
 - Where decisions were saved
 - Any gaps (things that happened but couldn't be categorized)
 
-Format responses in Polish. Follow vault CLAUDE.md rules for tags and wikilinks.
+Follow vault CLAUDE.md rules for tags and wikilinks.
 
 ## Step 6: Trigger dream worker
 

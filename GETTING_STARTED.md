@@ -74,7 +74,7 @@ claude
 
 ## GAN Loop — quality gate
 
-Automatically improves outputs. Triggered when you use words like "napisz/zrób/stwórz/wygeneruj".
+Automatically improves outputs. Triggered when you use words like "napisz/zrób/stwórz/wygeneruj" (Polish: write/do/create/generate).
 
 Manual use:
 ```bash
