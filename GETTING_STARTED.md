@@ -78,7 +78,7 @@ Automatically improves outputs. Triggered when you use words like "napisz/zrób/
 
 Manual use:
 ```bash
-cd ~/tools/gan-loop
+cd ~/.claude/tools/gan-loop
 
 # Create a brief:
 cat > briefs/my-task.md << 'EOF'

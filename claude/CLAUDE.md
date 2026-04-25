@@ -10,8 +10,8 @@ Profile — RuFlo classifies, I execute:
 - `code` → `codex adversarial-review --background`, threshold 9.0, 3 iter, async — NEVER blocks
 
 Execution:
-1. Write brief → `~/tools/gan-loop/briefs/[task].md`
-2. `cd ~/tools/gan-loop && ./run.sh briefs/[task].md`
+1. Write brief → `~/.claude/tools/gan-loop/briefs/[task].md`
+2. `cd ~/.claude/tools/gan-loop && ./run.sh briefs/[task].md`
 3. `code` profile: run in background, continue other work, macOS notification on PASS
 4. Return `runs/*/draft.md` as output
 

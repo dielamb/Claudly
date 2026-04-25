@@ -55,7 +55,7 @@ apply_placeholders() {
 }
 
 # ── 1. Prerequisites ─────────────────────────────────────────
-echo "[1/8] Checking prerequisites..."
+echo "[1/7] Checking prerequisites..."
 if ! has brew; then
   info "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -69,7 +69,7 @@ fi
 ok "Prerequisites ready"
 
 # ── 2. Claude Code ───────────────────────────────────────────
-echo "[2/8] Installing Claude Code..."
+echo "[2/7] Installing Claude Code..."
 if ! has claude; then
   npm install -g @anthropic-ai/claude-code
   ok "Claude Code installed"
@@ -78,7 +78,7 @@ else
 fi
 
 # ── 3. RTK ──────────────────────────────────────────────────
-echo "[3/8] Installing RTK (token optimizer)..."
+echo "[3/7] Installing RTK (token optimizer)..."
 if ! has rtk; then
   if has brew; then
     brew install rtk 2>/dev/null \
@@ -98,7 +98,7 @@ fi
 # ── 4. lean-ctx ─────────────────────────────────────────────
 # Must run BEFORE copying ~/.claude so it can register its MCP
 # via `claude mcp` (lean-ctx uses claude mcp registry, not settings.json)
-echo "[4/8] Installing lean-ctx..."
+echo "[4/7] Installing lean-ctx..."
 if ! has lean-ctx; then
   if has brew; then
     brew tap yvgude/lean-ctx 2>/dev/null && brew install lean-ctx
@@ -116,7 +116,7 @@ lean-ctx init --agent claude 2>/dev/null && ok "lean-ctx MCP registered" \
   || info "lean-ctx MCP: run 'lean-ctx init --agent claude' manually if ctx_read tools missing"
 
 # ── 5. claude-flow + ruflo + MCPs ────────────────────────────
-echo "[5/8] Installing claude-flow, ruflo, MCPs..."
+echo "[5/7] Installing claude-flow, ruflo, MCPs..."
 
 # Binaries
 npm install -g @claude-flow/cli 2>/dev/null && ok "claude-flow installed" \
@@ -159,7 +159,7 @@ elif has brew; then
 fi
 
 # ── 6. ~/.claude config ──────────────────────────────────────
-echo "[6/8] Setting up Claude Code config..."
+echo "[6/7] Setting up Claude Code config..."
 
 # Backup existing config if present
 if [ -d "$HOME/.claude" ]; then
@@ -187,24 +187,13 @@ chmod +x "$HOME/.claude/hooks/"*.sh     2>/dev/null || true
 chmod +x "$HOME/.claude/scripts/"*.sh   2>/dev/null || true
 chmod +x "$HOME/.claude/get-shit-done/bin/"*.cjs 2>/dev/null || true
 
-ok "Claude Code config installed"
+chmod +x "$HOME/.claude/tools/gan-loop/run.sh" 2>/dev/null || true
+chmod +x "$HOME/.claude/tools/gan-loop/gan-classifier.sh" 2>/dev/null || true
 
-# ── 7. GAN Loop ──────────────────────────────────────────────
-echo "[7/8] Setting up GAN loop..."
-GAN_DIR="$HOME/tools/gan-loop"
-mkdir -p "$(dirname "$GAN_DIR")"
+ok "Claude Code config + GAN loop installed"
 
-if [ -d "$GAN_DIR" ]; then
-  info "GAN loop already exists at $GAN_DIR — skipping"
-else
-  cp -r "$REPO_DIR/gan-loop/" "$GAN_DIR/"
-  apply_placeholders "$GAN_DIR"
-  chmod +x "$GAN_DIR/run.sh" "$GAN_DIR/gan-classifier.sh" 2>/dev/null || true
-  ok "GAN loop installed at $GAN_DIR"
-fi
-
-# ── 8. Obsidian ──────────────────────────────────────────────
-echo "[8/8] Setting up Obsidian..."
+# ── 7. Obsidian ──────────────────────────────────────────────
+echo "[7/7] Setting up Obsidian..."
 VAULT_DIR="$HOME/Desktop/Labirynt"
 
 if [ -d "$VAULT_DIR" ]; then
