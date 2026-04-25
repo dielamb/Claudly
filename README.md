@@ -17,13 +17,13 @@ One-command setup for Claude Code with full intelligence stack.
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/claude-setup/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/dielamb/Claudly/main/install.sh | bash
 ```
 
 Or clone and run:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/claude-setup
+git clone https://github.com/dielamb/Claudly
 cd claude-setup
 bash install.sh
 ```
