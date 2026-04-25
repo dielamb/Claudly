@@ -62,3 +62,4 @@ __pycache__/
 # obsidian/vault/1 Calendar/
 # obsidian/vault/2 Efforts/
 # etc.
+.claude-flow/
