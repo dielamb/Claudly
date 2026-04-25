@@ -56,13 +56,9 @@ __pycache__/
 *.pyc
 .venv/
 
-# ── Obsidian personal notes (vault content is private) ────────
-obsidian/vault/0 Inbox/
-obsidian/vault/1 Calendar/
-obsidian/vault/2 Efforts/
-obsidian/vault/3 Atlas/Career/
-obsidian/vault/4 People/
-obsidian/vault/5 Sources/
-obsidian/vault/6 Maps/
-obsidian/vault/Archive/
-# Keep: folder structure, .gitkeep, .obsidian config, Templates
+# ── Obsidian personal notes (only if user adds real content) ────
+# Template repo ships empty folders — structure must be in git
+# If you fork and use as personal vault, add your note folders here:
+# obsidian/vault/1 Calendar/
+# obsidian/vault/2 Efforts/
+# etc.
