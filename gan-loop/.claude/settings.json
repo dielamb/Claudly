@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Write",
+      "Edit",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(tee:*)",
+      "Bash(node:*)",
+      "mcp__lean-ctx__ctx_shell(*)"
+    ]
+  }
+}

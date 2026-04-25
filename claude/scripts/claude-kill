@@ -1,0 +1,58 @@
+#!/bin/bash
+# Claude Code kill switch toggle
+#
+# Usage:
+#   claude-kill                 # activate kill switch (default reason)
+#   claude-kill "reason here"   # activate with custom reason
+#   claude-kill --off           # deactivate kill switch
+#   claude-kill --status        # check current state
+#   claude-kill --log           # show recent blocked calls
+#
+# The kill switch is a file at ~/.claude/KILL_SWITCH.
+# When present, a PreToolUse hook blocks ALL tool calls in ALL Claude Code
+# sessions (including subagents). Use to emergency-stop runaway autonomous runs.
+
+KILL_FILE="$HOME/.claude/KILL_SWITCH"
+LOG_FILE="$HOME/.claude/kill-switch.log"
+
+case "${1:-}" in
+    --off|off|disable|deactivate)
+        if [ -f "$KILL_FILE" ]; then
+            rm "$KILL_FILE"
+            echo "✓ Kill switch DEACTIVATED. Claude Code can run tools again."
+        else
+            echo "Kill switch was already off."
+        fi
+        ;;
+    --status|status)
+        if [ -f "$KILL_FILE" ]; then
+            REASON=$(cat "$KILL_FILE" 2>/dev/null | head -1)
+            echo "🛑 Kill switch is ACTIVE"
+            echo "   Reason: ${REASON:-<no reason>}"
+            echo "   Since:  $(stat -f '%Sm' "$KILL_FILE" 2>/dev/null || stat -c '%y' "$KILL_FILE" 2>/dev/null)"
+        else
+            echo "✓ Kill switch is OFF. Claude Code runs normally."
+        fi
+        ;;
+    --log|log)
+        if [ -f "$LOG_FILE" ]; then
+            echo "Recent blocked calls:"
+            tail -20 "$LOG_FILE"
+        else
+            echo "No blocks logged yet."
+        fi
+        ;;
+    --help|-h|help)
+        sed -n '3,13p' "$0" | sed 's/^# //;s/^#//'
+        ;;
+    *)
+        REASON="${1:-Manual kill switch activated at $(date +%H:%M:%S)}"
+        echo "$REASON" > "$KILL_FILE"
+        echo "🛑 Kill switch ACTIVATED"
+        echo "   Reason: $REASON"
+        echo "   File:   $KILL_FILE"
+        echo
+        echo "All Claude Code tool calls are now blocked globally."
+        echo "To deactivate: claude-kill --off"
+        ;;
+esac

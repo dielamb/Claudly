@@ -1,0 +1,25 @@
+{
+  "_comment": "Copy this file per project. Edit project.path and add tasks.",
+  "project": {
+    "path": "__HOME__/Desktop/Portfolio/www_v2",
+    "type": "static-site",
+    "gates": ["secrets"]
+  },
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Example task",
+      "description": "Describe exactly what needs to be done",
+      "type": "feature",
+      "status": "pending",
+      "agent": null,
+      "branch": null,
+      "worktree": null,
+      "gateResults": {},
+      "attempts": 0,
+      "maxAttempts": 3,
+      "notes": ""
+    }
+  ],
+  "log": []
+}

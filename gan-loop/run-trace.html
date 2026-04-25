@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAN Loop — Run Trace</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #111; color: #D9D3CE; font-family: -apple-system, sans-serif; padding: 32px 20px 60px; max-width: 960px; margin: 0 auto; }
+
+h1 { font-size: 22px; color: #fff; margin-bottom: 4px; }
+.meta { font-size: 12px; color: #444; margin-bottom: 40px; }
+
+.run-switcher { display: flex; gap: 12px; margin-bottom: 40px; }
+.run-tab { padding: 8px 16px; border-radius: 6px; border: 1px solid #252525; font-size: 13px; cursor: pointer; color: #666; background: #1a1a1a; transition: all 0.15s; }
+.run-tab.active { border-color: #FB4900; color: #FB4900; background: #1a0d00; }
+.run-tab .tag-pass { color: #4ade80; font-size: 11px; margin-left: 6px; }
+.run-tab .tag-iters { color: #555; font-size: 11px; margin-left: 4px; }
+
+.run-panel { display: none; }
+.run-panel.active { display: block; }
+
+/* Timeline */
+.timeline { position: relative; padding-left: 32px; }
+.timeline::before { content: ""; position: absolute; left: 10px; top: 0; bottom: 0; width: 1px; background: #222; }
+
+.step { position: relative; margin-bottom: 32px; }
+.step::before { content: ""; position: absolute; left: -26px; top: 14px; width: 10px; height: 10px; border-radius: 50%; background: #333; border: 1px solid #444; }
+.step.pass::before { background: #22c55e; border-color: #22c55e; box-shadow: 0 0 8px #22c55e44; }
+.step.reject::before { background: #ef4444; border-color: #ef4444; }
+.step.info::before { background: #FB4900; border-color: #FB4900; }
+.step.warn::before { background: #eab308; border-color: #eab308; }
+
+.step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer; user-select: none; }
+.step-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #555; text-transform: uppercase; }
+.step-title { font-size: 14px; font-weight: 600; color: #ddd; flex: 1; }
+.step-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; }
+.sb-pass { background: #14532d; color: #4ade80; }
+.sb-reject { background: #450a0a; color: #f87171; }
+.sb-score { background: #222; color: #888; }
+.sb-info { background: #1a1a2a; color: #818cf8; }
+.sb-warn { background: #2a1a00; color: #fbbf24; }
+.chevron { color: #333; font-size: 11px; transition: transform 0.15s; }
+.step-body { display: none; }
+.step.open .step-body { display: block; }
+.step.open .chevron { transform: rotate(180deg); }
+
+/* Panels */
+.panel { background: #161616; border: 1px solid #1f1f1f; border-radius: 8px; padding: 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.7; }
+.panel-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #444; text-transform: uppercase; margin-bottom: 10px; }
+.panel pre, .panel code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; }
+
+/* Score table */
+.score-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.score-table th { color: #444; padding: 6px 10px; text-align: left; font-weight: 500; border-bottom: 1px solid #1f1f1f; }
+.score-table td { padding: 6px 10px; border-bottom: 1px solid #161616; color: #aaa; }
+.score-table tr.total td { color: #fff; font-weight: 700; border-top: 1px solid #222; }
+.sc { font-weight: 700; }
+.sc9, .sc10 { color: #22c55e; }
+.sc8 { color: #84cc16; }
+.sc7 { color: #FB4900; }
+.sc6 { color: #eab308; }
+.sc5, .sc4, .sc3 { color: #ef4444; }
+.bar { display: inline-flex; align-items: center; gap: 6px; }
+.bar-track { width: 60px; height: 3px; background: #2a2a2a; border-radius: 2px; display: inline-block; }
+.bar-fill { height: 3px; border-radius: 2px; display: inline-block; }
+
+/* Issue list */
+.issue { padding: 8px 0; border-bottom: 1px solid #1a1a1a; font-size: 12px; color: #888; }
+.issue:last-child { border: none; }
+.itag { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 3px; margin-right: 6px; font-weight: 600; }
+.it-critical { background: #450a0a; color: #f87171; }
+.it-major { background: #422006; color: #fbbf24; }
+.it-minor { background: #1a1a2a; color: #818cf8; }
+.it-none { background: #0f2a0f; color: #4ade80; }
+
+/* Code block */
+.code-block { background: #0d0d0d; border: 1px solid #1a1a1a; border-radius: 6px; padding: 16px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; line-height: 1.6; color: #C5BFB9; overflow-x: auto; white-space: pre; }
+
+/* Verdict banner */
+.verdict { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; }
+.verdict.pass { background: #0f2a0f; border: 1px solid #22c55e33; }
+.verdict.reject { background: #1a0808; border: 1px solid #ef444433; }
+.verdict.warn { background: #1a1200; border: 1px solid #eab30833; }
+.verdict-icon { font-size: 20px; }
+.verdict-text { font-size: 13px; }
+.verdict-text strong { color: #fff; }
+
+/* Iteration delta */
+.delta { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 3px; margin-left: 8px; }
+.delta-up { background: #0f2a0f; color: #4ade80; }
+.delta-down { background: #450a0a; color: #f87171; }
+</style>
+</head>
+<body>
+
+<h1>GAN Loop — Run Trace</h1>
+<p class="meta">2026-04-21 · Codex evaluator (default + code profiles) · ~/tools/gan-loop/</p>
+
+<div class="run-switcher">
+  <div class="run-tab active" onclick="switchRun('simple')">
+    test-simple-tagline
+    <span class="tag-pass">PASS 9.45</span>
+    <span class="tag-iters">1 iter</span>
+  </div>
+  <div class="run-tab" onclick="switchRun('complex')">
+    test-complex-debounce
+    <span class="tag-pass">PASS 9.80</span>
+    <span class="tag-iters">2 iter</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     RUN 1: test-simple-tagline
+═══════════════════════════════════════════════════ -->
+<div class="run-panel active" id="run-simple">
+<div class="timeline">
+
+  <div class="step info open" id="A1">
+    <div class="step-header" onclick="toggle('A1')">
+      <span class="step-label">Input</span>
+      <span class="step-title">Brief — test-simple-tagline</span>
+      <span class="step-badge sb-info">profile: default · threshold: 8.5</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <div class="panel">
+        <div class="panel-title">Zadanie</div>
+        <p>Tagline dla CLI tool kompresującego terminal output o 80% (Rust). Audience: senior engineers.</p>
+        <ul style="margin: 10px 0 0 16px; color: #888; font-size: 12px; line-height: 1.9;">
+          <li>Max 8 słów</li>
+          <li>Bez em dashy</li>
+          <li>Bez puns</li>
+          <li>Musi zawierać konkretny benefit (czas lub tokeny)</li>
+          <li>Zakaz: "powerful", "fast", "simple", "better"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step info" id="A2">
+    <div class="step-header" onclick="toggle('A2')">
+      <span class="step-label">Rubric Generator</span>
+      <span class="step-title">5 kryteriów specyficznych dla tagline copy</span>
+      <span class="step-badge sb-info">output_type: text/copy</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <div class="panel">
+        <div class="panel-title">Kryteria (domain: copy)</div>
+        <table class="score-table">
+          <thead><tr><th>Kryterium</th><th>Waga</th><th>Co mierzy</th></tr></thead>
+          <tbody>
+            <tr><td>Word Count Compliance</td><td>0.20</td><td>≤8 słów</td></tr>
+            <tr><td>Banned Element Avoidance</td><td>0.25</td><td>Brak em dashy, puns, generic adjectives</td></tr>
+            <tr><td>Concrete Benefit Specificity</td><td>0.30</td><td>Konkretna liczba lub observable outcome</td></tr>
+            <tr><td>Senior Engineer Audience Fit</td><td>0.15</td><td>Peer-level technical reference</td></tr>
+            <tr><td>Tagline Distinctiveness</td><td>0.10</td><td>Nie przenośne na inny tool</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="step pass open" id="A3">
+    <div class="step-header" onclick="toggle('A3')">
+      <span class="step-label">Iteracja 1</span>
+      <span class="step-title">Generator → Codex Evaluator</span>
+      <span class="step-badge sb-pass">PASS 9.45/10</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <div class="verdict pass">
+        <span class="verdict-icon">✅</span>
+        <div class="verdict-text"><strong>PASS — 9.45/10</strong> (threshold 8.5) · Codex: branch draft/test-simple-tagline-iter1-1776774344 vs feature/gan-loop</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Output — finalny tagline</div>
+        <div class="code-block">80% less terminal output. Zero grep chains.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Codex — wyniki per kryterium</div>
+        <table class="score-table">
+          <thead><tr><th>Kryterium</th><th>Wynik</th><th>Waga</th><th>Weighted</th></tr></thead>
+          <tbody>
+            <tr><td>Word Count Compliance</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.20</td><td>2.00</td></tr>
+            <tr><td>Banned Element Avoidance</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.25</td><td>2.50</td></tr>
+            <tr><td>Concrete Benefit Specificity</td><td><span class="sc sc9">9</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:90%;background:#22c55e"></span></span></span></td><td>0.30</td><td>2.70</td></tr>
+            <tr><td>Senior Engineer Audience Fit</td><td><span class="sc sc9">9</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:90%;background:#22c55e"></span></span></span></td><td>0.15</td><td>1.35</td></tr>
+            <tr><td>Tagline Distinctiveness</td><td><span class="sc sc9">9</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:90%;background:#22c55e"></span></span></span></td><td>0.10</td><td>0.90</td></tr>
+            <tr class="total"><td colspan="3">TOTAL</td><td>9.45/10</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Codex findings</div>
+        <div class="issue"><span class="itag it-none">BRAK</span>Żadnych krytycznych ani major issues. Threshold osiągnięty w 1 iteracji.</div>
+        <div class="issue"><span class="itag it-minor">NOTE</span><strong>Concrete Benefit 9/10:</strong> "80% less terminal output" — figura weryfikowalna. Nie znamy sample size ani metodologii. Nie blokuje — brief nie wymaga sourced claim.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step pass" id="A4">
+    <div class="step-header" onclick="toggle('A4')">
+      <span class="step-label">Wynik końcowy</span>
+      <span class="step-title">Git commit — PASS</span>
+      <span class="step-badge sb-pass">COMMITTED</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <div class="panel">
+        <div class="panel-title">Co trafiło do gita</div>
+        <div class="code-block">runs/20260421-142257-test-simple-tagline/
+  draft.md              ← "80% less terminal output. Zero grep chains."
+  feedback/feedback-001.md  ← Codex scores + findings
+  generator-state.md    ← co generator wiedział
+  run-summary.md        ← PASS, 9.45/10, 1 iter
+rubrics/
+  test-simple-tagline-rubric.md  ← reużywalny rubric</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     RUN 2: test-complex-debounce
+═══════════════════════════════════════════════════ -->
+<div class="run-panel" id="run-complex">
+<div class="timeline">
+
+  <div class="step info open" id="B1">
+    <div class="step-header" onclick="toggle('B1')">
+      <span class="step-label">Input</span>
+      <span class="step-title">Brief — test-complex-debounce</span>
+      <span class="step-badge sb-info">profile: code · threshold: 9.0</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <div class="panel">
+        <div class="panel-title">Zadanie</div>
+        <p>TypeScript <code>debounce</code> z <code>.cancel()</code> i <code>.flush()</code> metodami.</p>
+        <ul style="margin: 10px 0 0 16px; color: #888; font-size: 12px; line-height: 1.9;">
+          <li>Generic: <code>&lt;A extends unknown[], R&gt;</code> — pełna type inference</li>
+          <li><code>.cancel()</code> — czyści pending bez wywołania</li>
+          <li><code>.flush()</code> — wywołuje natychmiast jeśli pending, returns <code>R | undefined</code></li>
+          <li>Trailing-edge only</li>
+          <li>No stale closure (React event handlers)</li>
+          <li>Brak external dependencies</li>
+          <li>Named export + inline <code>// --- tests ---</code> z Node.js assert</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="step info" id="B2">
+    <div class="step-header" onclick="toggle('B2')">
+      <span class="step-label">Rubric Generator</span>
+      <span class="step-title">6 kryteriów specyficznych dla TS utility function</span>
+      <span class="step-badge sb-info">output_type: code</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <div class="panel">
+        <div class="panel-title">Kryteria (domain: code)</div>
+        <table class="score-table">
+          <thead><tr><th>Kryterium</th><th>Waga</th><th>Co mierzy</th></tr></thead>
+          <tbody>
+            <tr><td>Generic Type Safety</td><td>0.20</td><td>Zero any, full callsite inference</td></tr>
+            <tr><td>Cancel and Flush Semantics</td><td>0.25</td><td>Poprawne zachowanie .cancel() i .flush()</td></tr>
+            <tr><td>Stale Closure Prevention</td><td>0.20</td><td>latestArgs mutable ref — nie stale args</td></tr>
+            <tr><td>Test Coverage</td><td>0.20</td><td>Executable inline tests: delay, cancel, flush, coalescing</td></tr>
+            <tr><td>Trailing-Edge Timing Correctness</td><td>0.10</td><td>Jeden call na trailing edge, nie leading</td></tr>
+            <tr><td>Export and Dependency Constraints</td><td>0.05</td><td>Named export, zero external deps</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="step reject open" id="B3">
+    <div class="step-header" onclick="toggle('B3')">
+      <span class="step-label">Iteracja 1</span>
+      <span class="step-title">Generator → Codex Evaluator</span>
+      <span class="step-badge sb-reject">REJECT 8.80/10</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <div class="verdict reject">
+        <span class="verdict-icon">❌</span>
+        <div class="verdict-text"><strong>REJECT — 8.80/10</strong> (threshold 9.0) · Codex: branch draft/test-complex-debounce-iter1</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Codex — wyniki per kryterium</div>
+        <table class="score-table">
+          <thead><tr><th>Kryterium</th><th>Wynik</th><th>Waga</th><th>Weighted</th></tr></thead>
+          <tbody>
+            <tr><td>Generic Type Safety</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.20</td><td>2.00</td></tr>
+            <tr><td>Cancel and Flush Semantics</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.25</td><td>2.50</td></tr>
+            <tr><td>Stale Closure Prevention</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.20</td><td>2.00</td></tr>
+            <tr><td>Test Coverage</td><td><span class="sc sc4">4</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:40%;background:#ef4444"></span></span></span></td><td>0.20</td><td>0.80</td></tr>
+            <tr><td>Trailing-Edge Timing Correctness</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.10</td><td>1.00</td></tr>
+            <tr><td>Export and Dependency Constraints</td><td><span class="sc sc10">10</span> <span class="bar"><span class="bar-track"><span class="bar-fill" style="width:100%;background:#22c55e"></span></span></span></td><td>0.05</td><td>0.50</td></tr>
+            <tr class="total"><td colspan="3">TOTAL</td><td>8.80/10</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Codex findings</div>
+        <div class="issue"><span class="itag it-critical">KRYTYCZNE</span><strong>Test Coverage 4/10 — Markdown code fence:</strong> draft.md owinięty w <code>```ts ... ```</code>. Plik nie jest wykonywalny jako TypeScript/Node.js. Rubric wymaga runnable assert block. Fix: usuń fences, zostaw raw TS source.</div>
+        <div class="issue"><span class="itag it-none">RESZTA</span>Logika implementacji poprawna — generic types, cancel/flush, stale closure, timing — wszystko 10/10. Jedyny problem to format pliku.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step pass open" id="B4">
+    <div class="step-header" onclick="toggle('B4')">
+      <span class="step-label">Iteracja 2</span>
+      <span class="step-title">Generator (fix) → Codex Evaluator</span>
+      <span class="step-badge sb-pass">PASS 9.80/10</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <div class="verdict pass">
+        <span class="verdict-icon">✅</span>
+        <div class="verdict-text"><strong>PASS — 9.80/10</strong> (threshold 9.0) · Codex: branch draft/test-complex-debounce-iter2</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Co generator zmienił</div>
+        <div class="issue"><span class="itag it-none">FIX</span>Usunięto Markdown code fences. draft.md = raw TypeScript source, bezpośrednio wykonywalny przez Node.js/ts-node.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Codex — wyniki per kryterium</div>
+        <table class="score-table">
+          <thead><tr><th>Kryterium</th><th>Wynik</th><th>Δ vs iter1</th><th>Waga</th><th>Weighted</th></tr></thead>
+          <tbody>
+            <tr><td>Generic Type Safety</td><td><span class="sc sc10">10</span></td><td>—</td><td>0.20</td><td>2.00</td></tr>
+            <tr><td>Cancel and Flush Semantics</td><td><span class="sc sc10">10</span></td><td>—</td><td>0.25</td><td>2.50</td></tr>
+            <tr><td>Stale Closure Prevention</td><td><span class="sc sc10">10</span></td><td>—</td><td>0.20</td><td>2.00</td></tr>
+            <tr><td>Test Coverage</td><td><span class="sc sc9">9</span></td><td><span class="delta delta-up">+5</span></td><td>0.20</td><td>1.80</td></tr>
+            <tr><td>Trailing-Edge Timing Correctness</td><td><span class="sc sc10">10</span></td><td>—</td><td>0.10</td><td>1.00</td></tr>
+            <tr><td>Export and Dependency Constraints</td><td><span class="sc sc10">10</span></td><td>—</td><td>0.05</td><td>0.50</td></tr>
+            <tr class="total"><td colspan="2">TOTAL</td><td><span class="delta delta-up">+1.00</span></td><td></td><td>9.80/10</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Remaining notes (non-blocking)</div>
+        <div class="issue"><span class="itag it-minor">NOTE</span><strong>Test Coverage 9/10:</strong> Fake-timer harness custom zamiast sinon/@sinonjs. Akceptowalne (brief: no external deps). Wymaga manualnej weryfikacji poprawności fake-timer.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Output — debounce.ts (fragment)</div>
+        <div class="code-block">export type DebouncedFn&lt;A extends unknown[], R&gt; = {
+  (...args: A): void;
+  cancel(): void;
+  flush(): R | undefined;
+};
+
+export function debounce&lt;A extends unknown[], R&gt;(
+  fn: (...args: A) =&gt; R,
+  wait: number
+): DebouncedFn&lt;A, R&gt; {
+  let timerId: ReturnType&lt;typeof setTimeout&gt; | undefined;
+  let latestArgs: A | undefined;
+
+  function debounced(...args: A): void {
+    latestArgs = args;
+    if (timerId !== undefined) clearTimeout(timerId);
+    timerId = setTimeout(() =&gt; {
+      timerId = undefined;
+      fn(...latestArgs!);
+      latestArgs = undefined;
+    }, wait);
+  }
+
+  debounced.cancel = function (): void {
+    if (timerId !== undefined) { clearTimeout(timerId); timerId = undefined; }
+    latestArgs = undefined;
+  };
+
+  debounced.flush = function (): R | undefined {
+    if (timerId === undefined) return undefined;
+    clearTimeout(timerId);
+    timerId = undefined;
+    const args = latestArgs!;
+    latestArgs = undefined;
+    return fn(...args);
+  };
+
+  return debounced;
+}
+
+// --- tests ---
+// (fake-timer harness + 4 test cases: delay, cancel, flush, coalescing)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step pass" id="B5">
+    <div class="step-header" onclick="toggle('B5')">
+      <span class="step-label">Wynik końcowy</span>
+      <span class="step-title">Git commit — PASS</span>
+      <span class="step-badge sb-pass">COMMITTED</span>
+      <span class="chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <div class="panel">
+        <div class="panel-title">Co trafiło do gita</div>
+        <div class="code-block">runs/20260421-142741-test-complex-debounce/
+  draft.md                   ← raw TypeScript source (184 lines)
+  feedback/feedback-001.md   ← iter1: REJECT 8.80 (fence issue)
+  feedback/feedback-002.md   ← iter2: PASS 9.80
+  generator-state.md         ← iter2: fix description
+  run-summary.md             ← PASS, 9.80/10, 2 iters
+rubrics/
+  test-complex-debounce-rubric.md  ← reużywalny rubric</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function toggle(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle("open");
+}
+function switchRun(name) {
+  document.querySelectorAll(".run-panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".run-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("run-" + name).classList.add("active");
+  event.currentTarget.classList.add("active");
+}
+document.querySelectorAll(".step").forEach(s => s.classList.add("open"));
+</script>
+</body>
+</html>

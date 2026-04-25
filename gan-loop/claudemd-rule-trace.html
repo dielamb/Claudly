@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAN Loop — rubric-generator-v2 — Full Trace</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'SF Mono', 'Fira Code', monospace; background: #0e0e0e; color: #d9d3ce; padding: 48px; max-width: 1020px; margin: 0 auto; }
+  h1 { font-family: system-ui, sans-serif; color: #fff; font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .meta { color: #555; font-size: 11px; margin-bottom: 36px; letter-spacing: 0.06em; font-family: system-ui, sans-serif; }
+
+  /* Score header */
+  .score-bar { display: flex; align-items: stretch; gap: 24px; margin-bottom: 40px; padding: 24px 28px; background: #0a0a0a; border: 1px solid #1e1e1e; border-radius: 6px; }
+  .score-block { display: flex; flex-direction: column; gap: 4px; }
+  .score-block + .score-block { padding-left: 24px; border-left: 1px solid #1e1e1e; }
+  .score-label { font-family: system-ui; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #555; }
+  .score-val { font-family: system-ui; font-size: 32px; font-weight: 700; color: #fff; line-height: 1; }
+  .score-val.pass { color: #4caf50; }
+  .score-val.reject { color: #f44336; }
+  .score-val.small { font-size: 20px; }
+  .progress { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.r { background: #f44336; }
+  .dot.p { background: #4caf50; }
+  .dot.g { background: #333; }
+  .dot-label { font-family: system-ui; font-size: 11px; color: #666; margin-left: 4px; }
+
+  /* Section */
+  .section { margin-bottom: 48px; }
+  .section-head { font-family: system-ui, sans-serif; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: #444; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+  .section-head::after { content: ''; flex: 1; height: 1px; background: #1a1a1a; }
+  .iter-badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 12px; font-size: 10px; letter-spacing: 0.08em; font-family: system-ui; }
+  .iter-badge.r { background: #1a0505; border: 1px solid #3a0f0f; color: #f44336; }
+  .iter-badge.p { background: #051a05; border: 1px solid #0f3a0f; color: #4caf50; }
+
+  /* Boxes */
+  .box { background: #080808; border: 1px solid #1a1a1a; border-radius: 4px; padding: 22px 26px; font-size: 12px; line-height: 1.85; color: #b8b2ab; white-space: pre-wrap; }
+  .box.draft { border-color: #1a2214; }
+  .box.rubric-box { border-color: #141422; padding: 0; overflow: hidden; white-space: normal; }
+  .box.feedback { border-color: #1a1a1a; }
+
+  /* Rubric criteria */
+  .crit { padding: 18px 26px; border-bottom: 1px solid #111; }
+  .crit:last-child { border-bottom: none; }
+  .crit-head { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .crit-name { font-family: system-ui; font-size: 13px; font-weight: 500; color: #fff; }
+  .crit-w { font-family: system-ui; font-size: 11px; color: #444; }
+  .crit-desc { font-family: system-ui; font-size: 11px; color: #555; line-height: 1.6; margin-bottom: 14px; font-style: italic; }
+  .bands { display: flex; flex-direction: column; gap: 10px; }
+  .band { display: flex; gap: 0; }
+  .band-score { min-width: 46px; font-size: 11px; font-weight: 700; padding-top: 1px; font-family: system-ui; }
+  .band-score.hi { color: #4caf50; }
+  .band-score.mid { color: #ff9800; }
+  .band-score.lo { color: #f44336; }
+  .band-body { font-size: 11px; font-family: system-ui; line-height: 1.6; }
+  .band-specimen { background: #0d0d0d; border: 1px solid #1e1e1e; border-radius: 3px; padding: 6px 10px; margin-bottom: 4px; color: #c9c3bd; font-family: 'SF Mono', monospace; font-size: 11px; }
+  .band-why { color: #555; }
+  .band-why span { color: #ff9800; }
+
+  /* Feedback table */
+  .fb-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 18px; }
+  .fb-table th { font-family: system-ui; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #444; padding: 6px 10px; text-align: left; border-bottom: 1px solid #141414; }
+  .fb-table td { padding: 8px 10px; border-bottom: 1px solid #111; font-family: system-ui; font-size: 12px; }
+  .fb-table td:nth-child(2) { color: #d9d3ce; }
+  .fb-table td:nth-child(3), .fb-table td:nth-child(4) { color: #666; text-align: right; }
+  .fb-table tfoot td { border-top: 1px solid #1a1a1a; border-bottom: none; color: #fff; font-weight: 600; padding-top: 10px; }
+  .scorebar { display: inline-block; height: 4px; border-radius: 2px; vertical-align: middle; margin-left: 6px; }
+
+  .issue { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 3px; padding: 14px 18px; margin-bottom: 8px; font-size: 11px; line-height: 1.7; font-family: system-ui; }
+  .issue strong { color: #fff; display: block; margin-bottom: 4px; }
+  .issue .severity { display: inline-block; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 1px 6px; border-radius: 10px; margin-left: 6px; }
+  .issue .severity.critical { background: #1a0505; color: #f44336; border: 1px solid #3a0f0f; }
+  .issue .severity.major { background: #1a0e00; color: #ff9800; border: 1px solid #3a2000; }
+  .issue code { background: #141414; padding: 1px 5px; border-radius: 3px; color: #FF2DA0; font-size: 10px; }
+
+  .fixed-tag { display: inline-block; background: #051a05; border: 1px solid #0f3a0f; color: #4caf50; font-size: 9px; padding: 1px 5px; border-radius: 10px; margin-left: 6px; letter-spacing: 0.08em; }
+
+  .weights-foot { background: #060606; border-top: 1px solid #111; padding: 16px 26px; font-family: system-ui; }
+  .weights-foot table { font-size: 11px; }
+  .weights-foot td { padding: 4px 0; color: #444; border-bottom: 1px solid #0d0d0d; }
+  .weights-foot td:first-child { color: #777; }
+  .weights-foot td:last-child { text-align: right; }
+  .weights-foot tfoot td { color: #333; border-bottom: none; border-top: 1px solid #141414; padding-top: 8px; }
+  .thresh { color: #333; font-size: 10px; margin-top: 10px; }
+  .thresh .v { color: #4caf50; }
+
+  .divider { height: 1px; background: #141414; margin: 48px 0; }
+  .iter-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .iter-title { font-family: system-ui; font-size: 13px; color: #888; }
+</style>
+</head>
+<body>
+
+<h1>GAN Loop — rubric-generator-v2</h1>
+<div class="meta">2026-04-21 · default profile · threshold: 8.5 · static rubric reused (rubric-generator-v2-rubric.md)</div>
+
+<div class="score-bar">
+  <div class="score-block">
+    <div class="score-label">Final Verdict</div>
+    <div class="score-val pass">PASS</div>
+  </div>
+  <div class="score-block">
+    <div class="score-label">Final Score</div>
+    <div class="score-val">9.00<span style="font-size:18px;color:#555">/10</span></div>
+  </div>
+  <div class="score-block">
+    <div class="score-label">Iterations</div>
+    <div class="score-val small">2 / 3</div>
+    <div class="progress">
+      <div class="dot r" title="Iter 1: REJECT 8.20"></div>
+      <div class="dot p" title="Iter 2: PASS 9.00"></div>
+      <div class="dot g"></div>
+      <span class="dot-label">8.20 → 9.00</span>
+    </div>
+  </div>
+  <div class="score-block">
+    <div class="score-label">Key Fix</div>
+    <div style="font-family:system-ui;font-size:12px;color:#888;max-width:260px;line-height:1.5;margin-top:4px;">Domain Specificity 5→9: replaced LinkedIn/$15k worked example with CLAUDE.md routing vocabulary</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ STEP 1 DRAFT -->
+<div class="section">
+  <div class="section-head">Step 1 — Generator Output (raw draft, iter 1 input)</div>
+  <div class="box draft">## Rubric Generator — v2
+
+You are a rubric writer for a GAN evaluation loop. Given a task brief, produce a scoring rubric where every band contains a concrete, literal example — not a description of what good looks like.
+
+### Format rules (non-negotiable)
+
+Each criterion must have exactly three score bands: **9-10 (Exceptional)**, **6-7 (Acceptable)**, **1-4 (Reject)**. Scores 5 and 8 are intentional gaps — interpolate linearly between adjacent bands. Do not add extra bands.
+
+Each band must contain:
+1. A **literal quoted output specimen** at that score level — the actual text a generator would produce, in quotes
+2. A **Why:** clause naming the specific properties that earn or lose the score
+
+### Deriving examples
+
+Before writing any example:
+- Read the brief and extract the task domain (e.g., if brief is about CLAUDE.md routing rules, domain vocabulary = "loop BLOCKS / async / fast / default / code / profile / threshold")
+- Draft the 9-10 specimen first: the best output the task could produce, using domain vocabulary
+- Draft the 1-4 specimen: the worst plausible output — generic, vague, or off-domain
+- Draft the 6-7 specimen: output that partially meets the goal but has a clear gap
+- Make the gap between 9-10 and 1-4 so large no model can rationalize a mediocre output into the top band
+
+### Why clause rules
+
+The Why clause must name **concrete, matchable properties** — not adjectives. Allowed: character counts, specific phrases present/absent, structural features, measurable contrast. Forbidden: "clear," "specific," "good," "detailed" (without evidence).
+
+Bad Why: `Why: Good contrast and appropriate use of domain terms.`
+Good Why: `Why: Two literal profile names ("fast" / "code"), one measurable threshold (8.0 vs 9.0), one behavioral outcome ("blocks" vs "background"). Reader can verify all three claims without judgment.`
+
+### Example of a complete criterion
+
+**Criterion: Domain Vocabulary Coverage (weight: 0.35)**
+
+Score 9-10 (Exceptional):
+  `"Trigger 'napisz' without 'szkic' → route to fast profile, threshold 8.0, 2 iterations; trigger 'zrewiduj prompt' → loop BLOCKS until score passes."`
+  Why: Four literal trigger phrases from brief vocabulary, two explicit thresholds, two profile names, one blocking outcome. All claims machine-verifiable against the brief.
+
+Score 6-7 (Acceptable):
+  `"Fast tasks run with a lower threshold and fewer iterations than code tasks."`
+  Why: Single qualitative comparison ("lower") where 9-10 gives two explicit numbers (8.0 vs 9.0); "fast" and "code" present but thresholds absent. Two profile names present; zero threshold numbers (0 vs 2 in 9-10 specimen).
+
+Score 1-4 (Reject):
+  `"The system routes tasks based on their complexity and importance to ensure quality output."`
+  Why: Zero domain terms from brief. "Complexity," "importance," "quality" are generic adjectives applicable to any routing system. No profile names, thresholds, or trigger phrases.
+
+### Output structure
+
+    ### [Criterion Name] (weight: X.XX)
+
+    What you're measuring: [one sentence naming the observable property, not the desired quality — e.g., "Does every band contain a literal quoted output specimen?" not "Is the rubric good?"]
+
+    Score 9-10 (Exceptional):
+      `[quoted specimen]`
+      Why: [concrete, matchable properties]
+
+    Score 6-7 (Acceptable):
+      `[quoted specimen]`
+      Why: [concrete, matchable properties]
+
+    Score 1-4 (Reject):
+      `[quoted specimen]`
+      Why: [concrete, matchable properties]
+
+Derive 3–5 criteria from the brief. Assign weights summing to 1.00. Weight the criterion most predictive of quality failure highest (≥0.30). Place highest-weight criterion first.</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ STEP 2 RUBRIC -->
+<div class="section">
+  <div class="section-head">Step 2 — Static Rubric (rubric-generator-v2-rubric.md)</div>
+  <div class="box rubric-box">
+
+    <div class="crit">
+      <div class="crit-head"><span class="crit-name">Example Concreteness</span><span class="crit-w">weight: 0.35</span></div>
+      <div class="crit-desc">Does every score band contain a literal quoted example of output — not an abstract description of what good output looks like?</div>
+      <div class="bands">
+        <div class="band">
+          <span class="band-score hi">9–10</span>
+          <div class="band-body">
+            <div class="band-specimen">"zrewiduj prompt / popraw brief" → loop `BLOCKS`  (9-10)
+"revision-type requests → block"  (6-7)
+"use loop when needed"  (1-4)</div>
+            <div class="band-why"><span>Why:</span> Model compares own output against literal string. No interpretation required. Gap between bands visible, not inferred.</div>
+          </div>
+        </div>
+        <div class="band">
+          <span class="band-score mid">6–7</span>
+          <div class="band-body">
+            <div class="band-specimen">"Score 9-10: Output that clearly separates blocking from async cases with specific keywords."</div>
+            <div class="band-why"><span>Why:</span> 9-10 band is still a description, not a specimen. Generator self-evaluating maps itself to this description even when output is mediocre.</div>
+          </div>
+        </div>
+        <div class="band">
+          <span class="band-score lo">1–4</span>
+          <div class="band-body">
+            <div class="band-specimen">"Score 9-10: The rule unambiguously encodes both cases with a clear conditional."
+"Score 1-4: The distinction is absent or ambiguous."</div>
+            <div class="band-why"><span>Why:</span> This is the v1 rubric format. Generator self-evaluates against abstract ideals and consistently scores 8-9. No pressure to improve.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="crit">
+      <div class="crit-head"><span class="crit-name">Why Clause Presence</span><span class="crit-w">weight: 0.25</span></div>
+      <div class="crit-desc">Does every score band example include a "Why:" explanation naming the specific properties that earn or lose the score?</div>
+      <div class="bands">
+        <div class="band">
+          <span class="band-score hi">9–10</span>
+          <div class="band-body">
+            <div class="band-specimen">Why: 3 literal matchable phrases per case. Agent runs string search on user message, no judgment needed.</div>
+            <div class="band-why"><span>Why:</span> Why clause teaches evaluator what to look for, not just what to prefer. Forces implicit quality signals to become explicit.</div>
+          </div>
+        </div>
+        <div class="band">
+          <span class="band-score mid">6–7</span>
+          <div class="band-body">
+            <div class="band-specimen">Score 9-10: [example] Why: Specific phrases, clear routing.
+Score 1-4: [example]  ← no Why</div>
+            <div class="band-why"><span>Why:</span> Partial. Evaluator understands ideal but cannot diagnose mediocre outputs.</div>
+          </div>
+        </div>
+        <div class="band">
+          <span class="band-score lo">1–4</span>
+          <div class="band-body">
+            <div class="band-specimen">Score 9-10: "Both cases named clearly."  ← no Why anywhere</div>
+            <div class="band-why"><span>Why:</span> Evaluator must infer what separates bands. Generator exploits the ambiguity.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="crit">
+      <div class="crit-head"><span class="crit-name">Domain Specificity of Examples</span><span class="crit-w">weight: 0.20</span></div>
+      <div class="crit-desc">Are examples derived from the actual task domain, or are they generic templates that could appear in any rubric?</div>
+      <div class="bands">
+        <div class="band">
+          <span class="band-score hi">9–10</span>
+          <div class="band-body">
+            <div class="band-specimen">"zrewiduj prompt / popraw brief → loop `BLOCKS`" Why: Polish trigger phrases matchable against user input for this specific CLAUDE.md routing rule.</div>
+            <div class="band-why"><span>Why:</span> Domain-specific examples expose gaps the generator cannot hide. Generic examples let any output look compliant.</div>
+          </div>
+        </div>
+        <div class="band">
+          <span class="band-score mid">6–7</span>
+          <div class="band-body">
+            <div class="band-specimen">"[blocking trigger phrase] → BLOCKS, [async trigger phrase] → async"</div>
+            <div class="band-why"><span>Why:</span> Bracket placeholders shift burden back to evaluator. Generator fills them with whatever it wrote.</div>
+          </div>
+        </div>
+        <div class="band">
+          <span class="band-score lo">1–4</span>
+          <div class="band-body">
+            <div class="band-specimen">"I was quoted $15,000 for an MVP. I built it for $197 in a weekend."</div>
+            <div class="band-why"><span>Why:</span> LinkedIn hook domain. Meaningless for a CLAUDE.md config snippet. Signals copy-paste from training data, not task-derived reasoning. <strong style="color:#f44336">← iter 1 failure</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="crit">
+      <div class="crit-head"><span class="crit-name">Score Band Contrast</span><span class="crit-w">weight: 0.20</span></div>
+      <div class="crit-desc">Is the gap between 9-10 and 1-4 large enough that a model cannot rationalize a mediocre output into the top band?</div>
+      <div class="bands">
+        <div class="band">
+          <span class="band-score hi">9–10</span>
+          <div class="band-body">
+            <div class="band-specimen">9-10: "zrewiduj prompt / popraw brief / ulepsz brief" → loop `BLOCKS`
+1-4: "use loop blocking when the situation calls for it"</div>
+            <div class="band-why"><span>Why:</span> Any reader immediately sees the difference. No rationalization path from 1-4 to 9-10.</div>
+          </div>
+        </div>
+        <div class="band">
+          <span class="band-score mid">6–7</span>
+          <div class="band-body">
+            <div class="band-specimen">9-10: "zrewiduj prompt" → BLOCKS (Polish trigger, explicit)
+1-4: "revision requests → blocking mode (use judgment)"</div>
+            <div class="band-why"><span>Why:</span> Superficially similar structure. Motivated generator could argue "judgment"-based output is close to 9-10.</div>
+          </div>
+        </div>
+        <div class="band">
+          <span class="band-score lo">1–4</span>
+          <div class="band-body">
+            <div class="band-specimen">9-10: "Score 9-10: Rule clearly encodes both cases."
+1-4: "Score 1-4: Rule is unclear or missing triggers."</div>
+            <div class="band-why"><span>Why:</span> "Clearly" vs "unclear" is the only contrast. Generator always believes its output is "clear." v1 failure mode.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="weights-foot">
+      <table>
+        <tbody>
+          <tr><td>Example Concreteness</td><td>0.35</td></tr>
+          <tr><td>Why Clause Presence</td><td>0.25</td></tr>
+          <tr><td>Domain Specificity</td><td>0.20</td></tr>
+          <tr><td>Score Band Contrast</td><td>0.20</td></tr>
+        </tbody>
+        <tfoot><tr><td>TOTAL</td><td>1.00</td></tr></tfoot>
+      </table>
+      <div class="thresh">PASS if weighted_score &ge; <span class="v">8.5</span></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════════════════════════════════════════════════════ ITERATION 1 -->
+<div class="section">
+  <div class="iter-header">
+    <span class="iter-badge r">● REJECT</span>
+    <span class="iter-title">Iteration 1 — Score: 8.20 / 10</span>
+  </div>
+
+  <table class="fb-table">
+    <thead><tr><th>Criterion</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead>
+    <tbody>
+      <tr><td>Example Concreteness</td><td>9/10 <span class="scorebar" style="width:54px;background:#FF2DA0"></span></td><td>0.35</td><td>3.15</td></tr>
+      <tr><td>Why Clause Presence</td><td>9/10 <span class="scorebar" style="width:54px;background:#FF2DA0"></span></td><td>0.25</td><td>2.25</td></tr>
+      <tr><td style="color:#f44336">Domain Specificity</td><td style="color:#f44336">5/10 <span class="scorebar" style="width:30px;background:#f44336"></span></td><td>0.20</td><td style="color:#f44336">1.00</td></tr>
+      <tr><td>Score Band Contrast</td><td>9/10 <span class="scorebar" style="width:54px;background:#FF2DA0"></span></td><td>0.20</td><td>1.80</td></tr>
+    </tbody>
+    <tfoot><tr><td>TOTAL</td><td></td><td></td><td>8.20 → REJECT (threshold 8.5)</td></tr></tfoot>
+  </table>
+
+  <div class="issue">
+    <strong>Domain Specificity — wrong domain in worked example <span class="severity critical">critical</span></strong>
+    The only concrete specimen in the prompt was from a LinkedIn/MVP-cost domain: <code>"I was quoted $15,000 for an MVP. I built it for $197 in a weekend."</code> This teaches downstream generators to produce LinkedIn-style specimens regardless of task domain. Fix: replace with CLAUDE.md routing vocabulary — <code>"zrewiduj prompt / popraw brief" → loop `BLOCKS`</code>
+  </div>
+  <div class="issue">
+    <strong>Deriving examples — no inline domain extraction demo <span class="severity critical">critical</span></strong>
+    "Read the brief and extract the task domain" with no example. Generator defaults to training-data anchor (LinkedIn hook). Fix: add concrete inline example of domain extraction for CLAUDE.md ecosystem.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ ITERATION 2 -->
+<div class="section">
+  <div class="iter-header">
+    <span class="iter-badge p">✓ PASS</span>
+    <span class="iter-title">Iteration 2 — Score: 9.00 / 10</span>
+  </div>
+
+  <table class="fb-table">
+    <thead><tr><th>Criterion</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead>
+    <tbody>
+      <tr><td>Example Concreteness</td><td>9/10 <span class="scorebar" style="width:54px;background:#FF2DA0"></span></td><td>0.35</td><td>3.15</td></tr>
+      <tr><td>Why Clause Presence</td><td>9/10 <span class="scorebar" style="width:54px;background:#FF2DA0"></span></td><td>0.25</td><td>2.25</td></tr>
+      <tr><td style="color:#4caf50">Domain Specificity</td><td style="color:#4caf50">9/10 <span class="scorebar" style="width:54px;background:#4caf50"></span></td><td>0.20</td><td style="color:#4caf50">1.80</td></tr>
+      <tr><td>Score Band Contrast</td><td>9/10 <span class="scorebar" style="width:54px;background:#FF2DA0"></span></td><td>0.20</td><td>1.80</td></tr>
+    </tbody>
+    <tfoot><tr><td>TOTAL</td><td></td><td></td><td>9.00 → PASS ✓</td></tr></tfoot>
+  </table>
+
+  <div class="issue">
+    <strong>What improved <span class="fixed-tag">FIXED</span></strong>
+    Domain Specificity 5→9: LinkedIn/$15k worked example replaced with CLAUDE.md routing vocabulary (<code>loop BLOCKS / async / fast / default / code / profile / threshold</code>). Inline domain extraction demo added. 6-7 Why clause upgraded from vague "Contrast present" to measurable comparison with explicit numbers (8.0 vs 9.0). Intentional score gaps (5, 8) now explicitly acknowledged. Fence nesting resolved via 4-space indent. "What you're measuring" inline note added distinguishing observable property from desired quality.
+  </div>
+  <div class="issue">
+    <strong>Why clause 6-7 band — still contains soft phrase <span class="severity major">major</span></strong>
+    "Reader cannot verify the gap" is judgment dressed as property. Rephrase to: <code>"Two profile names present; zero threshold numbers (0 vs 2 in 9-10 specimen). Gap is countable."</code>
+  </div>
+  <div class="issue">
+    <strong>Weight distribution — no heuristic given <span class="severity major">major</span></strong>
+    "Assign weights summing to 1.00" with no rule. Generator may assign 0.25 uniformly, flattening signal. Add: <code>"Weight the criterion most predictive of quality failure highest (≥0.30)."</code>
+  </div>
+</div>
+
+</body>
+</html>

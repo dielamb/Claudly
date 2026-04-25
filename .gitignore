@@ -1,0 +1,68 @@
+# ── Obsidian ─────────────────────────────────────────────────
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/plugins/*/data.json
+!.obsidian/plugins/calendar/data.json
+
+# Excalidraw main.js is 8MB — downloaded by install.sh, not tracked
+obsidian/vault/.obsidian/plugins/obsidian-excalidraw-plugin/main.js
+
+.smart-connections/
+.obsidian-git-data
+.trash/
+
+# ── System ────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Secrets & private keys (defense-in-depth) ────────────────
+.env
+.env.local
+*.local.md
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+credentials*
+secrets.y*ml
+auth.json
+
+# ── Claude Code runtime state (never commit) ─────────────────
+claude/projects/
+claude/.claude-flow/sessions/
+claude/.claude-flow/data/
+claude/logs/
+claude/telemetry/
+claude/paste-cache/
+claude/file-history/
+claude/history.jsonl
+claude/last-session.json
+claude/settings.local.json
+
+# ── GAN Loop runtime state ────────────────────────────────────
+gan-loop/.claude-flow/
+gan-loop/.logs/
+gan-loop/output/
+gan-loop/runs/
+
+# ── Node / Python ─────────────────────────────────────────────
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+
+# ── Obsidian personal notes (vault content is private) ────────
+obsidian/vault/0 Inbox/
+obsidian/vault/1 Calendar/
+obsidian/vault/2 Efforts/
+obsidian/vault/3 Atlas/Career/
+obsidian/vault/4 People/
+obsidian/vault/5 Sources/
+obsidian/vault/6 Maps/
+obsidian/vault/Archive/
+# Keep: folder structure, .gitkeep, .obsidian config, Templates
