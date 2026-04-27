@@ -1,4 +1,7 @@
-.DS_Store
-output/
+# Volatile data — not tracked in clean install repo
+runs/
 .logs/
-*.log
+output/
+viewer-data.js
+briefs/
+rubrics/

@@ -13,7 +13,7 @@ const os = require('os');
 
 const POLL_INTERVAL_MS = 6000;
 const TIMEOUT_MS = 12 * 60 * 1000;
-const GAN_LOOP_DIR = path.join(os.homedir(), 'tools', 'gan-loop');
+const GAN_LOOP_DIR = path.join(os.homedir(), '.claude', 'tools', 'gan-loop');
 const RUNS_DIR = path.join(GAN_LOOP_DIR, 'runs');
 const RUFLO_URL = 'http://localhost:8741/message';
 

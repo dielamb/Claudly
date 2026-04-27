@@ -103,6 +103,10 @@ while iteration <= max_iterations:
     read [output_dir]/generator-state.md
     if contains "BLOCKED:" — write run-summary BLOCKED, exit 1
 
+    # Snapshot generator output for this iteration so the viewer can show
+    # what the generator produced at each step (overwrite pattern would lose this).
+    Bash: `mkdir -p "[output_dir]/drafts" && cp "[output_dir]/draft.md" "[output_dir]/drafts/draft-iter-$(printf '%03d' [iteration]).md" && cp "[output_dir]/generator-state.md" "[output_dir]/drafts/state-iter-$(printf '%03d' [iteration]).md"`
+
     feedback_path = "[output_dir]/feedback/feedback-" + zero_pad(iteration, 3) + ".md"
     RUBRIC_CONTENT = read rubrics/[task_name]-rubric.md
     DRAFT_CONTENT = read [output_dir]/draft.md
@@ -188,6 +192,60 @@ if iteration > max_iterations and verdict != PASS:
         exit 1
 ```
 
+## Step 2.5 — Final-Cleanup Pass (mandatory, applies regardless of verdict)
+
+After the main loop exits (PASS or accept-with-notes), the LAST evaluator feedback is never applied to the draft — the loop scores then exits. This step closes that gap.
+
+Behavior:
+
+```
+last_feedback_path = "[output_dir]/feedback/feedback-" + zero_pad(final_iteration, 3) + ".md"
+last_feedback = read last_feedback_path
+
+# Decide whether cleanup is needed
+has_critical = grep -qE "^(### |## |\*\*)Critical" last_feedback || grep -qiE "critical issue" last_feedback
+has_major    = grep -qE "^(### |## |\*\*)Major"    last_feedback || grep -qiE "major issue"    last_feedback
+has_minor    = grep -qE "^(### |## |\*\*)Minor"    last_feedback || grep -qiE "minor issue"    last_feedback
+has_any_unfixed_score_below_10 = any criterion in last_feedback score table is < 10
+
+if NOT (has_critical or has_major or has_minor or has_any_unfixed_score_below_10):
+    skip cleanup — write to run-summary "Final-Cleanup: SKIPPED (no unfixed items in last feedback)"
+    proceed to Step 3
+else:
+    spawn gan-generator via Task with explicit cleanup directive:
+      "FINAL CLEANUP PASS — no new content, no re-architecture.
+       Brief: briefs/[task_name].md (read for context only).
+       Rubric: rubrics/[task_name]-rubric.md (read for context only).
+       Draft: [output_dir]/draft.md (the file to patch).
+       Feedback to apply: [output_dir]/feedback/feedback-NNN.md (the LAST evaluator feedback).
+       State: [output_dir]/generator-state.md.
+       
+       Strict rules:
+       1. Read the LAST feedback file. Address EVERY Critical, Major, AND Minor item.
+       2. Read the existing draft.md. Make MINIMAL surgical edits only.
+       3. Do NOT add new sections. Do NOT remove existing sections.
+       4. Do NOT change architectural decisions. Patch wording, fix paths, fill placeholders, add named tools where missing, remove unused references.
+       5. Append a 'Final Cleanup Applied' note to generator-state.md listing each item addressed.
+       Output: overwrite [output_dir]/draft.md."
+    
+    wait for completion
+    
+    read [output_dir]/generator-state.md
+    if contains "BLOCKED:" — log warning, proceed to Step 3 anyway with note "Final-Cleanup: BLOCKED — last feedback NOT applied"
+    
+    # NO re-evaluation. No new feedback file. No re-scoring.
+    # The cleanup is a one-shot polish pass; we trust the generator to apply the items
+    # listed in the existing feedback. Re-evaluation would push the cycle to 4+ iterations
+    # with diminishing returns.
+    
+    log to run-summary: "Final-Cleanup: APPLIED (items addressed in feedback-NNN.md)"
+    Bash: `bash ~/RychuOS/rychu-msg.sh working "GAN final-cleanup applied" "GAN Loop" 2>/dev/null || true`
+```
+
+Note: the FINAL score reported in run-summary is the LAST evaluator score (pre-cleanup). The post-cleanup draft is what ships, but it is unscored. This is intentional — it preserves the audit trail showing what the evaluator saw, while delivering a draft with the last feedback applied.
+
+If you want a re-scored final draft, run a second GAN with `resume: true` seeded with the cleaned-up draft.
+
 ## Step 3 — Final report
 
 Write `[output_dir]/run-summary.md`:
@@ -200,6 +258,7 @@ Profile: [fast|default|code]
 Iterations: N / max_iterations
 Final score: X.XX / 10
 Verdict: PASS | REJECT | accept-with-notes
+Final-Cleanup: APPLIED (items addressed in feedback-NNN.md) | SKIPPED (perfect score) | BLOCKED (generator failed)
 
 ## Score progression
 | Iteration | Score | Verdict |

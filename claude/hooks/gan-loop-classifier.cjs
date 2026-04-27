@@ -14,7 +14,7 @@ const os = require('os');
 // ─── Constants ────────────────────────────────────────────────────────────────
 const COOLDOWN_FILE = '/tmp/gan-loop-classifier-last-run';
 const COOLDOWN_MS = 8 * 60 * 1000;
-const GAN_LOOP_DIR = path.join(os.homedir(), 'tools', 'gan-loop');
+const GAN_LOOP_DIR = path.join(os.homedir(), '.claude', 'tools', 'gan-loop');
 const BRIEFS_DIR = path.join(GAN_LOOP_DIR, 'briefs');
 const RUFLO_URL = 'http://localhost:8741/message';
 const WATCHER_SCRIPT = path.join(__dirname, 'gan-loop-watcher.cjs');

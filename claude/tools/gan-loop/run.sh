@@ -53,7 +53,7 @@ rychu() { bash "$RYCHU" "$1" "$2" "GAN Loop" 2>/dev/null || true; }
 rychu "thinking" "GAN start: $TASK_NAME"
 
 cd "$LOOP_DIR"
-claude -p --agent loop-operator \
+env -u ANTHROPIC_API_KEY claude -p --model sonnet --agent loop-operator \
   "Run GAN loop. Working directory: $LOOP_DIR. Brief: $ABS_BRIEF. Config: $LOOP_DIR/gan.json. Output directory: $RUN_DIR. All file paths use $RUN_DIR instead of output/." \
   2>&1 | tee "$LOG_FILE"
 
@@ -70,4 +70,11 @@ if grep -q "Verdict: PASS" "$RUN_DIR/run-summary.md" 2>/dev/null; then
 else
   VERDICT=$(grep -oP 'Verdict:\s*\K\w+' "$RUN_DIR/run-summary.md" 2>/dev/null || echo "REJECT")
   rychu "error" "GAN $VERDICT: $TASK_NAME"
+fi
+
+# Regenerate viewer-data.js so the HTML viewer reflects this run
+if [ -x "$LOOP_DIR/viewer-build.sh" ]; then
+  "$LOOP_DIR/viewer-build.sh" "$LOOP_DIR/runs" >/dev/null 2>&1 || true
+elif [ -x "$HOME/Desktop/claude-setup/claude/tools/gan-loop/viewer-build.sh" ]; then
+  "$HOME/Desktop/claude-setup/claude/tools/gan-loop/viewer-build.sh" "$LOOP_DIR/runs" >/dev/null 2>&1 || true
 fi
