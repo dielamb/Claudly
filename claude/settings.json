@@ -288,6 +288,15 @@
         "hooks": [
           {
             "type": "command",
+            "command": "/Users/michalmaciejewski/.claude/hooks/prompt-enrichment.sh",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
             "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" route'",
             "timeout": 10000
           }

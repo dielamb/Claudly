@@ -161,7 +161,7 @@ function writeInsightToObsidian(summary, content) {
 const NEGATIVE_SIGNALS = [
   'nie tak', 'nie to', 'wrong', 'bad', 'revert', 'undo', 'cofnij',
   'fix this', 'napraw', 'popraw', 'to nie dziala', 'doesn\'t work',
-  'nie działa', 'zle', 'źle', 'blad', 'błąd', 'error', 'bug',  // Polish: doesn't work, bad, error
+  'nie działa', 'zle', 'źle', 'blad', 'błąd', 'error', 'bug',
 ];
 
 function detectNegativeSignal(prompt) {
@@ -402,7 +402,48 @@ function init() {
     }
   }
 
-  // Skip rebuild if graph is fresh and store hasn't changed
+  // PRESERVE graphify-computed graph (with real edges + PageRank) if recent
+  // graphify-intelligence.cjs writes graph-state with source: 'graphify' and edges from graph.json
+  // Without this, init() rebuilds graph from store entries only (no edges → broken PageRank)
+  // CHECKED BEFORE generic cache-hit short-circuit, so graphify branch builds ranked-context properly
+  if (graphState && graphState.source === 'graphify' && graphState.edges && graphState.edges.length > 50) {
+    const age = Date.now() - (graphState.updatedAt || 0);
+    if (age < 24 * 60 * 60 * 1000) { // 24h freshness
+      // Build ranked context using graphify's pre-computed pageRanks
+      const graphifyPageRanks = graphState.pageRanks || {};
+      const rankedEntries = store.map(entry => {
+        const id = entry.id;
+        const content = entry.content || entry.value || '';
+        const summary = entry.summary || entry.key || '';
+        const words = tokenize(content + ' ' + summary);
+        return {
+          id,
+          content: content.slice(0, 300),
+          summary: summary.slice(0, 100),
+          namespace: entry.namespace || 'default',
+          quality: entry.quality || (entry.metadata && entry.metadata.quality) || 'normal',
+          accessCount: (entry.metadata && entry.metadata.accessCount) || 0,
+          pageRank: graphifyPageRanks[id] || 0,
+          words,
+        };
+      }).sort((a, b) => b.pageRank - a.pageRank);
+
+      writeJSON(RANKED_PATH, {
+        version: 1,
+        computedAt: Date.now(),
+        source: 'graphify-bridge',
+        entries: rankedEntries,
+      });
+
+      return {
+        nodes: graphState.nodeCount,
+        edges: graphState.edges.length,
+        message: 'Using graphify-computed graph (preserves real edges + PageRank)',
+      };
+    }
+  }
+
+  // Skip rebuild if graph is fresh and store hasn't changed (cache hit, generic)
   if (graphState && graphState.nodeCount === store.length) {
     const age = Date.now() - (graphState.updatedAt || 0);
     if (age < 60000) {

@@ -255,6 +255,52 @@ async function doImport() {
     dim(`├─ Learning: ${config.learningBridge.enabled ? 'active' : 'disabled'}`);
     dim(`├─ Graph: ${config.memoryGraph.enabled ? 'active' : 'disabled'}`);
     dim(`└─ Agent scopes: ${config.agentScopes.enabled ? 'active' : 'disabled'}`);
+
+    // Bridge to AgentDB: store entries with ONNX vector embeddings for semantic search
+    // Path: __dirname/../v3 → ~/.claude/v3/ (where we cherry-picked compiled dist)
+    let vectorized = 0;
+    try {
+      const cliDistPath = join(__dirname, '..', 'v3', '@claude-flow', 'cli', 'dist', 'src', 'memory', 'memory-initializer.js');
+      if (existsSync(cliDistPath)) {
+        const memInit = await import(`file://${cliDistPath}`);
+        await memInit.initializeMemoryDatabase({ force: false, verbose: false });
+
+        const entries = await backend.query({});
+        for (const entry of entries) {
+          if (!entry.content || entry.content.length < 10) continue;
+          try {
+            await memInit.storeEntry({
+              key: entry.key || entry.id,
+              value: entry.content,
+              namespace: entry.namespace || 'auto-memory',
+              generateEmbeddingFlag: true,
+            });
+            vectorized++;
+          } catch { /* skip entries that fail to embed */ }
+        }
+
+        if (vectorized > 0) {
+          success(`Vectorized ${vectorized} entries into AgentDB (ONNX 384-dim)`);
+        }
+      }
+    } catch (vecErr) {
+      dim(`AgentDB vectorization skipped: ${vecErr.message?.slice(0, 60)}`);
+    }
+
+    // Flush intelligence patterns to disk (SONA + ReasoningBank)
+    try {
+      const intPath = join(__dirname, '..', 'v3', '@claude-flow', 'cli', 'dist', 'src', 'memory', 'intelligence.js');
+      if (existsSync(intPath)) {
+        const intelligence = await import(`file://${intPath}`);
+        if (intelligence.flushPatterns) {
+          intelligence.flushPatterns();
+          const stats = intelligence.getIntelligenceStats?.();
+          if (stats && stats.patternsLearned > 0) {
+            success(`Flushed ${stats.patternsLearned} learned patterns to disk`);
+          }
+        }
+      }
+    } catch { /* non-critical */ }
   } catch (err) {
     dim(`Import failed (non-critical): ${err.message}`);
   }
