@@ -362,6 +362,24 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node \"/Users/michalmaciejewski/.claude/helpers/auto-memory-hook.mjs\" import",
+            "timeout": 30000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"/Users/michalmaciejewski/.claude/helpers/learning-hooks.sh\" session-start",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
             "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/obsidian-extended-loader.cjs\"",
             "timeout": 10000
           }
@@ -446,6 +464,24 @@
             "timeout": 3000
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/michalmaciejewski/.claude/helpers/ewc-consolidate.mjs\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"/Users/michalmaciejewski/.claude/helpers/learning-hooks.sh\" session-end",
+            "timeout": 15000
+          }
+        ]
       }
     ],
     "PreCompact": [
@@ -525,6 +561,33 @@
           {
             "type": "command",
             "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" session-end'",
+            "timeout": 8000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/michalmaciejewski/.claude/helpers/auto-memory-hook.mjs\" sync",
+            "timeout": 15000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" post-task",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/michalmaciejewski/.claude/helpers/sona-trigger.mjs\"",
             "timeout": 8000
           }
         ]

@@ -212,9 +212,55 @@ function readConfig() {
 async function doImport() {
   log('Importing auto memory files into bridge...');
 
+  // STANDALONE ONNX EMBEDDING BRIDGE — runs BEFORE memory package check
+  // Uses cli/dist/src/memory/ files directly (compiled, self-contained, no @claude-flow/memory dep)
+  try {
+    const cliDistPath = join(__dirname, '..', 'v3', '@claude-flow', 'cli', 'dist', 'src', 'memory', 'memory-initializer.js');
+    if (existsSync(cliDistPath) && existsSync(STORE_PATH)) {
+      const memInit = await import(`file://${cliDistPath}`);
+      await memInit.initializeMemoryDatabase({ force: false, verbose: false });
+
+      const storeContent = JSON.parse(readFileSync(STORE_PATH, 'utf-8'));
+      const entries = Array.isArray(storeContent) ? storeContent : (storeContent.entries || []);
+      let vectorized = 0;
+      for (const entry of entries) {
+        if (!entry.content || entry.content.length < 10) continue;
+        try {
+          await memInit.storeEntry({
+            key: entry.key || entry.id,
+            value: entry.content,
+            namespace: entry.namespace || 'auto-memory',
+            generateEmbeddingFlag: true,
+          });
+          vectorized++;
+        } catch { /* skip entries that fail to embed */ }
+      }
+      if (vectorized > 0) {
+        success(`Vectorized ${vectorized} entries into AgentDB (ONNX 384-dim)`);
+      }
+    }
+  } catch (vecErr) {
+    dim(`AgentDB vectorization skipped: ${vecErr.message?.slice(0, 60)}`);
+  }
+
+  // SONA pattern flush
+  try {
+    const intPath = join(__dirname, '..', 'v3', '@claude-flow', 'cli', 'dist', 'src', 'memory', 'intelligence.js');
+    if (existsSync(intPath)) {
+      const intelligence = await import(`file://${intPath}`);
+      if (intelligence.flushPatterns) {
+        intelligence.flushPatterns();
+        const stats = intelligence.getIntelligenceStats?.();
+        if (stats && stats.patternsLearned > 0) {
+          success(`Flushed ${stats.patternsLearned} learned patterns to disk`);
+        }
+      }
+    }
+  } catch { /* non-critical */ }
+
   const memPkg = await loadMemoryPackage();
   if (!memPkg || !memPkg.AutoMemoryBridge) {
-    dim('Memory package not available — skipping auto memory import');
+    dim('Memory package not available — ONNX bridge ran, AutoMemoryBridge skipped');
     return;
   }
 
