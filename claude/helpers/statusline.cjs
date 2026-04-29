@@ -407,31 +407,42 @@ function getAgentDBStats() {
     path.join(CWD, '.claude-flow', 'data', 'auto-memory-store.json'),
     path.join(globalClaudeFlow, 'auto-memory-store.json'),
   ];
+  // Sum across project + global (dedupe if same canonical path, e.g. CWD == home)
+  const seenStores = new Set();
   for (const storePath of storePaths) {
+    let realPath = storePath;
+    try { realPath = fs.realpathSync(storePath); } catch { /* ignore */ }
+    if (seenStores.has(realPath)) continue;
     const storeStat = safeStat(storePath);
     if (storeStat) {
+      seenStores.add(realPath);
       dbSizeKB += storeStat.size / 1024;
       try {
         const store = JSON.parse(fs.readFileSync(storePath, 'utf-8'));
         const count = Array.isArray(store) ? store.length : (store && store.entries ? store.entries.length : 0);
-        if (count > vectorCount) vectorCount = count;
+        vectorCount += count;
       } catch { /* fall back */ }
-      break;
     }
   }
 
-  // 2. Count entries from ranked-context.json (project-local, then global fallback)
+  // 2. Count entries from ranked-context.json (sum project + global, dedupe)
   const rankedPaths = [
     path.join(CWD, '.claude-flow', 'data', 'ranked-context.json'),
     path.join(globalClaudeFlow, 'ranked-context.json'),
   ];
+  let rankedTotal = 0;
+  const seenRanked = new Set();
   for (const rp of rankedPaths) {
+    let realPath = rp;
+    try { realPath = fs.realpathSync(rp); } catch { /* ignore */ }
+    if (seenRanked.has(realPath)) continue;
+    seenRanked.add(realPath);
     try {
       const ranked = readJSON(rp);
-      if (ranked && ranked.entries && ranked.entries.length > vectorCount) vectorCount = ranked.entries.length;
-      break;
+      if (ranked && ranked.entries) rankedTotal += ranked.entries.length;
     } catch { /* ignore */ }
   }
+  if (rankedTotal > vectorCount) vectorCount = rankedTotal;
 
   // 3. Add DB file sizes
   const dbFiles = [
