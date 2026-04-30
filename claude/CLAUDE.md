@@ -13,6 +13,7 @@ Trigger: `[CODING SWARM] queue=<id>` marker in UserPromptSubmit additionalContex
 If fresh + relevant:
 - IMMEDIATELY invoke `Skill(skill="coding-swarm", args="<id>")` — no ask, no summary
 - Skill orchestrates Understand → (Design if HIGH-craft) → Build → Verify via Task() agents
+- **ALL Task() agents spawn FOREGROUND (visible colored UI) — never `run_in_background: true`. Visibility is the point.**
 - Phase gates use AskUserQuestion
 - ALWAYS spawn Task() agents per workflow — NEVER inline. Inline = SPEC VIOLATION
 - "User interrupted 2+ times" → re-frame scope and SPAWN AGAIN, NOT switch to inline
@@ -46,12 +47,17 @@ Classify every task before starting:
 - New component from scratch → `/gsd:discuss-phase` then plan
 - Iteration 3 still failing → STOP, switch to `/gsd:debug`
 
-## Background-First
-Operation > 30s → `run_in_background: true`. Never block conversation while waiting.
-- `Agent(run_in_background=true)` — all agent spawns
-- `Bash(run_in_background=true)` — GAN, builds, tests, installs
+## Background-First (fire-and-forget only)
+Background ONLY for non-interactive long ops where output isn't watched live:
+- `Bash(run_in_background=true)` — builds, tests, GAN loop, installs, CI
+- Agent spawns: bg ONLY when user explicitly says "fire and forget" / "leć w tle"
 
-After launching: brief status + continue working. Never go silent on long-running call.
+**ALWAYS foreground (visible Task UI live):**
+- Research, planning, code review, audits, design phases — user wants to watch progress
+- Coding swarm Task() spawns — visibility IS the point (colored UI, live status, Esc to interrupt)
+- Anything user invoked interactively (`/gsd-*`, `/ultrareview`, etc)
+
+After launching bg op: brief status + continue working. Never go silent on long-running call.
 Short ops (<5s): foreground.
 
 ## Branch-First (git repos only)
