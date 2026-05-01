@@ -362,6 +362,15 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/dreamer-rules-indexer.cjs\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
             "command": "node \"/Users/michalmaciejewski/.claude/helpers/auto-memory-hook.mjs\" import",
             "timeout": 30000
           }
