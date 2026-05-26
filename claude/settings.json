@@ -176,6 +176,16 @@
         ]
       },
       {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers-user/vault-quality-checker.cjs\"",
+            "timeout": 2000
+          }
+        ]
+      },
+      {
         "matcher": "Read",
         "hooks": [
           {
@@ -191,6 +201,15 @@
         "hooks": [
           {
             "type": "command",
+            "command": "__HOME__/.claude/hooks/prompt-enrichment.sh",
+            "timeout": 5000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
             "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" route'",
             "timeout": 10000
           }
@@ -201,6 +220,15 @@
           {
             "type": "command",
             "command": "node \"__HOME__/.claude/helpers-user/synthesis-context-injector.cjs\"",
+            "timeout": 3000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers-user/url-ingest-detector.cjs\"",
             "timeout": 3000
           }
         ]
@@ -226,6 +254,24 @@
       }
     ],
     "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "touch ~/.claude/AUTO_TLDR_DISABLED",
+            "timeout": 1000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"__HOME__/.claude/helpers-user/verify-integrity.sh\"",
+            "timeout": 5000
+          }
+        ]
+      },
       {
         "hooks": [
           {

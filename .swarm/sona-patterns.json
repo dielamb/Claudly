@@ -5,21 +5,21 @@
       "keywords": [
         "unknown"
       ],
-      "confidence": 0.36124999999999996,
+      "confidence": 0.425,
       "successCount": 0,
-      "failureCount": 2,
-      "lastUsed": 1779767744027,
-      "createdAt": 1779767744025
+      "failureCount": 1,
+      "lastUsed": 1779766901374,
+      "createdAt": 1779766901374
     }
   },
   "stats": {
-    "trajectoriesProcessed": 8,
+    "trajectoriesProcessed": 6,
     "successfulRoutings": 0,
-    "failedRoutings": 8,
-    "lastUpdate": 1779767744027
+    "failedRoutings": 6,
+    "lastUpdate": 1779766901374
   },
   "metadata": {
-    "createdAt": "2026-05-26T03:55:44.027Z",
-    "savedAt": "2026-05-26T03:55:44.027Z"
+    "createdAt": "2026-05-26T03:41:41.375Z",
+    "savedAt": "2026-05-26T03:41:41.375Z"
   }
 }
