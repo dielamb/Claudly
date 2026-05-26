@@ -22,13 +22,6 @@ echo " User: $USERNAME | Home: $HOME_DIR"
 echo "================================================"
 echo ""
 
-# ── User email (for calendar/meeting skills) ─────────────────
-if [ -z "${USER_EMAIL:-}" ]; then
-  printf "  Primary email (for calendar/meeting skills, or Enter to skip): "
-  read -r USER_EMAIL
-fi
-USER_EMAIL="${USER_EMAIL:-user@example.com}"
-
 # ── API Key ──────────────────────────────────────────────────
 if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
   echo "ANTHROPIC_API_KEY not set."
@@ -54,8 +47,8 @@ apply_placeholders() {
     -o -name "*.js" -o -name "*.mjs" -o -name "*.ts" \
     -o -name "*.md" -o -name "*.yaml" -o -name "*.yml" \
   \) | while read -r f; do
-    sed -i '' "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g; s|__USER_EMAIL__|$USER_EMAIL|g" "$f" 2>/dev/null \
-      || sed -i "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g; s|__USER_EMAIL__|$USER_EMAIL|g" "$f" 2>/dev/null \
+    sed -i '' "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g" "$f" 2>/dev/null \
+      || sed -i "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g" "$f" 2>/dev/null \
       || true
   done
 }

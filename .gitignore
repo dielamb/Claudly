@@ -81,6 +81,10 @@ claude/scripts/logs/*.log
 **/.claude-flow/sessions/
 **/.swarm/
 **/results/*.json
+**/agentdb.rvf
+**/agentdb.rvf.lock
+**/ruvector.db
+claude/scripts/logs/
 
 # ── Node / Python ─────────────────────────────────────────────
 node_modules/
