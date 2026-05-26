@@ -1,0 +1,1 @@
+/Users/michalmaciejewski/.claude/skills/gstack/setup-browser-cookies/SKILL.md

@@ -1,0 +1,1 @@
+/Users/michalmaciejewski/.claude/skills/gstack/document-release/SKILL.md
