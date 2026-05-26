@@ -46,26 +46,16 @@ info() { echo "  → $1"; }
 ok()   { echo "  ✓ $1"; }
 fail() { echo "  ✗ $1"; exit 1; }
 
-# Substitute __HOME__, __USERNAME__, __AGENTCRAFT__ placeholders in a directory
+# Substitute __HOME__, __USERNAME__, __USER_EMAIL__ placeholders
 apply_placeholders() {
   local dir="$1"
-  # Resolve agentcraft plugin path (npx cache hash is machine-specific)
-  local agentcraft_path=""
-  agentcraft_path=$(find "$HOME/.npm/_npx" -path "*/agentcraft/plugin/hooks" -type d 2>/dev/null | head -1 | sed 's|/plugin/hooks||')
-  if [ -z "$agentcraft_path" ]; then
-    # Pre-cache agentcraft so the path exists
-    npx -y @idosal/agentcraft --version >/dev/null 2>&1 || true
-    agentcraft_path=$(find "$HOME/.npm/_npx" -path "*/agentcraft/plugin/hooks" -type d 2>/dev/null | head -1 | sed 's|/plugin/hooks||')
-  fi
-  agentcraft_path="${agentcraft_path:-__AGENTCRAFT__}"
-
   find "$dir" -type f \( \
     -name "*.json" -o -name "*.sh" -o -name "*.cjs" \
     -o -name "*.js" -o -name "*.mjs" -o -name "*.ts" \
     -o -name "*.md" -o -name "*.yaml" -o -name "*.yml" \
   \) | while read -r f; do
-    sed -i '' "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g; s|__AGENTCRAFT__|$agentcraft_path|g; s|__USER_EMAIL__|$USER_EMAIL|g" "$f" 2>/dev/null \
-      || sed -i "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g; s|__AGENTCRAFT__|$agentcraft_path|g; s|__USER_EMAIL__|$USER_EMAIL|g" "$f" 2>/dev/null \
+    sed -i '' "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g; s|__USER_EMAIL__|$USER_EMAIL|g" "$f" 2>/dev/null \
+      || sed -i "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g; s|__USER_EMAIL__|$USER_EMAIL|g" "$f" 2>/dev/null \
       || true
   done
 }

@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "patterns": {
+    "undefined:unknown": {
+      "keywords": [
+        "unknown"
+      ],
+      "confidence": 0.425,
+      "successCount": 0,
+      "failureCount": 1,
+      "lastUsed": 1779766901374,
+      "createdAt": 1779766901374
+    }
+  },
+  "stats": {
+    "trajectoriesProcessed": 6,
+    "successfulRoutings": 0,
+    "failedRoutings": 6,
+    "lastUpdate": 1779766901374
+  },
+  "metadata": {
+    "createdAt": "2026-05-26T03:41:41.375Z",
+    "savedAt": "2026-05-26T03:41:41.375Z"
+  }
+}
