@@ -177,7 +177,7 @@ function main() {
   let added = 0;
   for (const c of toAdd) {
     const id = makeEntryId(c.file);
-    const extracted = extractSections(c.content, ['## Problem', '## Rozwiązanie', '## Efekt', '## Solution', '## Effect', '## Context', '## Why it worked']);
+    const extracted = extractSections(c.content, ['## Problem', '## Rozwiązanie', '## Efekt', '## Solution', '## Effect']);
     const patternText = extracted || c.content.slice(0, 800);
 
     store.push({
@@ -226,7 +226,7 @@ function main() {
     if (!content || content.length < 80) continue;
     const fm = parseFrontmatter(content);
     if (pushEntry(store, storeIds, p.name, p.mtime, content, fm, 'patterns', 'pattern',
-        ['## Wzorzec', '## Pattern', '## Kod', '## Code', '## Kiedy używać', '## When to use'])) {
+        ['## Wzorzec', '## Pattern', '## Kod', '## Kiedy używać'])) {
       patternAdded++;
     }
   }
@@ -240,7 +240,7 @@ function main() {
     if (!content || content.length < 80) continue;
     const fm = parseFrontmatter(content);
     if (pushEntry(store, storeIds, d.name, d.mtime, content, fm, 'design-principles', 'design-principle',
-        ['## Zasada', '## Principle', '## Dlaczego', '## Why', '## Kiedy stosować', '## When to apply'])) {
+        ['## Zasada', '## Principle', '## Dlaczego', '## Kiedy stosować'])) {
       principleAdded++;
     }
   }

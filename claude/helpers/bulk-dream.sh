@@ -83,8 +83,8 @@ for mtime, f in files:
         if not human_messages: continue
         obs = {'ts': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(mtime)), 'session_id': f.stem, 'human_messages': human_messages[:30], 'agents_run': agents_run[:10], 'skills_read': list(skills_read)}
         last_msg = human_messages[-1].lower() if human_messages else ''
-        failure_signals = ['błąd', 'znowu', 'nie działa', 'nie dzia', 'fix', 'again', 'wrong', 'revert', 'crash', 'failed', 'cofnij', 'nie tak', 'kurwa', 'wyjebal', 'padl', 'broken']  # Polish: error, again, doesn't work, revert, go back, not like that
-        success_signals = ['działa', 'dziala', 'done', 'complete', 'works', 'pass', 'great', 'perfect', 'gotowe', 'super', 'spoko', 'ok dzieki', 'tak właśnie', 'tak wlasnie', 'o to chodzi']  # Polish: works, done, great, that's exactly it
+        failure_signals = ['błąd', 'znowu', 'nie działa', 'nie dzia', 'fix', 'again', 'wrong', 'revert', 'crash', 'failed', 'cofnij', 'nie tak', 'kurwa', 'wyjebal', 'padl', 'broken']
+        success_signals = ['działa', 'dziala', 'done', 'complete', 'works', 'pass', 'great', 'perfect', 'gotowe', 'super', 'spoko', 'ok dzieki', 'tak właśnie', 'tak wlasnie', 'o to chodzi']
         outcome = 'failure' if any(s in last_msg for s in failure_signals) else 'success' if any(s in last_msg for s in success_signals) else 'unknown'
         obs['outcome'] = outcome
         with open(out_file, 'w') as fp:

@@ -1,0 +1,12 @@
+{
+  "runIndex": 4,
+  "prompt": "startup validation experiment tracker",
+  "cwd": "__HOME__",
+  "expected_pass": "true",
+  "actual_result": "PASS",
+  "keywords_matched": [
+    "startup-validation"
+  ],
+  "output_length": 12483,
+  "context_excerpt": "<prior-knowledge>\n[INTELLIGENCE] Relevant patterns for this task:\n  * (0.22) Startup Validation: Facts [rank #1, 0x accessed]\n  * (0.22) Startup Validation: Rules [rank #2, 0x accessed]\n  * (0.20) Domain: Startup Validation [rank #3, 0x accessed]\n  * (0.20) Startup Validation Domain [rank #4, 0x accessed]\n  * (0.19) Startup Validation: Hypotheses [rank #5, 0x accessed]\n\n## Domain Rules (startup-validation)\n---\ntype: domain-rules\ndomain: startup-validation\nstatus: active\ndate: 2026-04-26\n---\n\n# Startup Validation — Rules\n\nPrescriptive rules confirmed 3+ times. Apply by default before considering alternatives.\n\n## Tool Selection\n\n### R1 — Validate tool's validation paper before using it\nKażde narzędzie do simulation/prediction ma ograniczony validation scope. Sprawdź którę pytania paper fakt"
+}

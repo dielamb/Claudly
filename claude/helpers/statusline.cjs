@@ -407,31 +407,55 @@ function getAgentDBStats() {
     path.join(CWD, '.claude-flow', 'data', 'auto-memory-store.json'),
     path.join(globalClaudeFlow, 'auto-memory-store.json'),
   ];
+  // Sum across project + global (dedupe if same canonical path, e.g. CWD == home)
+  const seenStores = new Set();
   for (const storePath of storePaths) {
+    let realPath = storePath;
+    try { realPath = fs.realpathSync(storePath); } catch { /* ignore */ }
+    if (seenStores.has(realPath)) continue;
     const storeStat = safeStat(storePath);
     if (storeStat) {
+      seenStores.add(realPath);
       dbSizeKB += storeStat.size / 1024;
       try {
         const store = JSON.parse(fs.readFileSync(storePath, 'utf-8'));
         const count = Array.isArray(store) ? store.length : (store && store.entries ? store.entries.length : 0);
-        if (count > vectorCount) vectorCount = count;
+        vectorCount += count;
       } catch { /* fall back */ }
-      break;
     }
   }
 
-  // 2. Count entries from ranked-context.json (project-local, then global fallback)
+  // 2. Count entries from ranked-context.json (sum project + global, dedupe)
   const rankedPaths = [
     path.join(CWD, '.claude-flow', 'data', 'ranked-context.json'),
     path.join(globalClaudeFlow, 'ranked-context.json'),
   ];
+  let rankedTotal = 0;
+  const seenRanked = new Set();
   for (const rp of rankedPaths) {
+    let realPath = rp;
+    try { realPath = fs.realpathSync(rp); } catch { /* ignore */ }
+    if (seenRanked.has(realPath)) continue;
+    seenRanked.add(realPath);
     try {
       const ranked = readJSON(rp);
-      if (ranked && ranked.entries && ranked.entries.length > vectorCount) vectorCount = ranked.entries.length;
-      break;
+      if (ranked && ranked.entries) rankedTotal += ranked.entries.length;
     } catch { /* ignore */ }
   }
+  if (rankedTotal > vectorCount) vectorCount = rankedTotal;
+
+  // 2b. Count vectorized entries from ~/.swarm/memory.db (real ONNX embeddings)
+  // This restores the pre-2026-05-11 behavior where the count reflected actual searchable vectors.
+  try {
+    const Database = require('better-sqlite3');
+    const memDbPath = path.join(os.homedir(), '.swarm', 'memory.db');
+    if (safeStat(memDbPath)) {
+      const memDb = new Database(memDbPath, { readonly: true });
+      const row = memDb.prepare("SELECT COUNT(*) as c FROM memory_entries WHERE embedding IS NOT NULL AND status='active'").get();
+      memDb.close();
+      if (row && row.c > vectorCount) vectorCount = row.c;
+    }
+  } catch { /* non-critical — fall back to store.json count */ }
 
   // 3. Add DB file sizes
   const dbFiles = [
@@ -689,71 +713,48 @@ function generateStatusline() {
       } catch { /* */ }
     }
 
-    // GAN loop — live status if running, last run info if not
+    // GAN loop — live status from state file, fallback to runs directory scan
     let ganScore = '';
-    const ganRunsDir = path.join(home, 'tools', 'gan-loop', 'runs');
+    const ganStateFile = path.join(home, '.claude', 'tools', 'gan-loop', '.gan-loop-state.json');
+    const ganRunsDir = path.join(home, '.claude', 'tools', 'gan-loop', 'runs');
     try {
-      if (fs.existsSync(ganRunsDir)) {
+      const stateData = readJSON(ganStateFile);
+      if (stateData && stateData.status && !stateData.status.startsWith('done')) {
+        // Active loop — animated display
+        const framesGen  = ['›··', '‹›·', '··›'];
+        const framesEval = ['··‹', '·‹·', '‹··'];
+        const f = (stateData.frame || 0) % 3;
+        const dir = stateData.direction || 'generate';
+        const arrow = dir === 'evaluate'
+          ? c.cyan    + framesEval[f] + c.reset
+          : c.yellow  + framesGen[f]  + c.reset;
+        const taskDisplay = (stateData.task || 'task').slice(0, 14);
+        ganScore = c.yellow + '◈GAN' + c.reset + ' ' + c.cyan + taskDisplay + c.reset + ' ' +
+          (stateData.iteration || 0) + '/' + (stateData.maxIter || 3) + ' ' + arrow;
+      } else if (stateData && stateData.status === 'done-pass') {
+        ganScore = c.dim + 'GAN ' + c.reset + c.brightGreen + (stateData.task || '').slice(0, 14) + ' ✓' + c.reset;
+      } else if (stateData && stateData.status === 'done-fail') {
+        ganScore = c.dim + 'GAN ' + c.reset + c.red + (stateData.task || '').slice(0, 14) + ' ✗' + c.reset;
+      } else if (fs.existsSync(ganRunsDir)) {
+        // No active state — show last completed run from directory scan
         const runs = fs.readdirSync(ganRunsDir)
           .filter(d => /^\d{8}-\d{6}-/.test(d))
           .sort().reverse();
-
-        // Check if a loop is currently running (fresh dir, no summary yet)
-        let activeRun = null;
-        for (const run of runs.slice(0, 2)) {
-          const runDir = path.join(ganRunsDir, run);
-          const sumFile = path.join(runDir, 'run-summary.md');
-          const dirStat = fs.statSync(runDir);
-          const ageMs = Date.now() - dirStat.mtimeMs;
-          if (!fs.existsSync(sumFile) && ageMs < 15 * 60 * 1000) {
-            // Active: no summary, modified within 15 min
-            const taskName = run.replace(/^\d{8}-\d{6}-/, '');
-            // Count feedback files to estimate iteration
-            const feedbackDir = path.join(runDir, 'feedback');
-            let iter = 0;
-            try { iter = fs.readdirSync(feedbackDir).filter(f => f.endsWith('.md')).length; } catch {}
-            // Try to get last score from latest feedback
-            let lastScore = '';
-            if (iter > 0) {
-              try {
-                const fbFiles = fs.readdirSync(feedbackDir).filter(f => f.endsWith('.md')).sort().reverse();
-                const fbContent = fs.readFileSync(path.join(feedbackDir, fbFiles[0]), 'utf-8');
-                const sm = fbContent.match(/"weighted_total":\s*([\d.]+)/);
-                const vm = fbContent.match(/"verdict":\s*"(\w+)"/);
-                if (sm) {
-                  const s = parseFloat(sm[1]);
-                  const v = vm ? vm[1] : '?';
-                  const col = v === 'PASS' ? c.brightGreen : v === 'GATE_FAIL' ? c.red : c.brightYellow;
-                  lastScore = ' ' + col + s.toFixed(1) + ' ' + v + c.reset;
-                }
-              } catch {}
-            }
-            activeRun = c.brightYellow + '🔄 GAN' + c.reset + ' ' + c.cyan + taskName.slice(0, 20) + c.reset +
-              ' iter ' + c.brightWhite + (iter + 1) + c.reset + '/3' + lastScore;
-            break;
-          }
-        }
-
-        if (activeRun) {
-          ganScore = activeRun;
-        } else {
-          // No active run — show last completed
-          for (const run of runs.slice(0, 3)) {
-            const sumFile = path.join(ganRunsDir, run, 'run-summary.md');
-            if (fs.existsSync(sumFile)) {
-              const sum = fs.readFileSync(sumFile, 'utf-8');
-              const sm = sum.match(/Final score:\s*([\d.]+)/);
-              const vm = sum.match(/Verdict:\s*(\w+)/);
-              if (sm) {
-                const score = parseFloat(sm[1]);
-                const pass = vm && vm[1].toUpperCase() === 'PASS';
-                const scoreColor = pass ? c.brightGreen : score >= 8 ? c.brightYellow : c.red;
-                const stat = fs.statSync(path.join(ganRunsDir, run, 'run-summary.md'));
-                const ageH = Math.floor((Date.now() - stat.mtimeMs) / 3600000);
-                const ageStr = ageH < 1 ? '<1h' : ageH + 'h';
-                ganScore = c.dim + 'GAN last ' + c.reset + scoreColor + score.toFixed(1) + (pass ? '✓' : '✗') + c.reset + c.dim + ' ' + ageStr + c.reset;
-                break;
-              }
+        for (const run of runs.slice(0, 20)) {
+          const sumFile = path.join(ganRunsDir, run, 'run-summary.md');
+          if (fs.existsSync(sumFile)) {
+            const sum = fs.readFileSync(sumFile, 'utf-8');
+            const sm = sum.match(/Final score:\s*([\d.]+)/);
+            const vm = sum.match(/Verdict:\s*(\w+)/);
+            if (sm) {
+              const score = parseFloat(sm[1]);
+              const pass = vm && vm[1].toUpperCase() === 'PASS';
+              const scoreColor = pass ? c.brightGreen : score >= 8 ? c.brightYellow : c.red;
+              const stat = fs.statSync(sumFile);
+              const ageH = Math.floor((Date.now() - stat.mtimeMs) / 3600000);
+              const ageStr = ageH < 1 ? '<1h' : ageH + 'h';
+              ganScore = c.dim + 'GAN last ' + c.reset + scoreColor + score.toFixed(1) + (pass ? '✓' : '✗') + c.reset + c.dim + ' ' + ageStr + c.reset;
+              break;
             }
           }
         }

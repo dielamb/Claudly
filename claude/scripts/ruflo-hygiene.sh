@@ -33,7 +33,7 @@ STALE_EFFORTS=$(find "$EFFORTS" -name "*.md" -not -newer "$(date -v-30d +%Y-%m-%
 
 echo "[$DATE] Vault scan done — junk=$JUNK_FILES missing_quality=$MISSING_QUALITY" >> "$LOG_DIR/ruflo-hygiene.log"
 
-claude --dangerously-skip-permissions -p "
+env -u ANTHROPIC_API_KEY claude --dangerously-skip-permissions -p "
 You are running a bi-weekly Obsidian vault hygiene check. Operate ONLY on files, not on RuFlo.
 
 ## Step 1: Find duplicate Problem files

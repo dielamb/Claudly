@@ -1,25 +1,17 @@
 #!/usr/bin/env node
-// gsd-hook-version: 1.34.2
+// gsd-hook-version: 1.35.0
 // GSD Read Guard — PreToolUse hook
-// Injects advisory guidance when Write/Edit targets an existing file,
-// reminding the model to Read the file first.
+// Injects advisory guidance when Write/Edit targets an existing file
+// that has NOT been read in the current session.
 //
-// Background: Non-Claude models (e.g. MiniMax M2.5 on OpenCode) don't
-// natively follow the read-before-edit pattern. When they attempt to
-// Write/Edit an existing file without reading it, the runtime rejects
-// with "You must read file before overwriting it." The model retries
-// without reading, creating an infinite loop that burns through usage.
-//
-// This hook prevents that loop by injecting clear guidance BEFORE the
-// tool call reaches the runtime. The model sees the advisory and can
-// issue a Read call on the next turn.
-//
-// Triggers on: Write and Edit tool calls
-// Action: Advisory (does not block) — injects read-first guidance
-// Only fires when the target file already exists on disk.
+// State tracking: gsd-read-tracker.js (PostToolUse Read) writes session
+// read list to ~/.claude/read-guard-state/<session_id>.json.
+// This hook skips the advisory if the file is already in that list.
 
 const fs = require('fs');
 const path = require('path');
+
+const STATE_DIR = path.join(process.env.HOME || '', '.claude', 'read-guard-state');
 
 let input = '';
 const stdinTimeout = setTimeout(() => process.exit(0), 3000);
@@ -31,33 +23,32 @@ process.stdin.on('end', () => {
     const data = JSON.parse(input);
     const toolName = data.tool_name;
 
-    // Only intercept Write and Edit tool calls
     if (toolName !== 'Write' && toolName !== 'Edit') {
       process.exit(0);
     }
 
     const filePath = data.tool_input?.file_path || '';
-    if (!filePath) {
-      process.exit(0);
-    }
+    if (!filePath) process.exit(0);
 
-    // Only inject guidance when the file already exists.
-    // New files don't need a prior Read — the runtime allows creating them directly.
-    let fileExists = false;
+    // Only fire for existing files
     try {
       fs.accessSync(filePath, fs.constants.F_OK);
-      fileExists = true;
     } catch {
-      // File does not exist — no guidance needed
-    }
-
-    if (!fileExists) {
       process.exit(0);
     }
+
+    // Check if file was already read this session
+    const sessionId = data.session_id || 'default';
+    const stateFile = path.join(STATE_DIR, `${sessionId}.json`);
+    try {
+      const files = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
+      if (Array.isArray(files) && files.includes(filePath)) {
+        process.exit(0); // Already read — no advisory needed
+      }
+    } catch {}
 
     const fileName = path.basename(filePath);
 
-    // Advisory guidance — does not block the operation
     const output = {
       hookSpecificOutput: {
         hookEventName: 'PreToolUse',
@@ -71,7 +62,6 @@ process.stdin.on('end', () => {
 
     process.stdout.write(JSON.stringify(output));
   } catch {
-    // Silent fail — never block tool execution
     process.exit(0);
   }
 });

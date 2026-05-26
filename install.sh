@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # ============================================================
-# Claude Code Setup Installer
+# Claudly — Claude Code Intelligence Stack Installer
 # One command: Claude Code + RTK + lean-ctx + claude-flow
-# + GAN loop + Obsidian vault + all hooks/agents/skills
+# + Obsidian vault + graphify + all hooks/agents/skills
 # ============================================================
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -12,10 +12,17 @@ USERNAME=$(whoami)
 HOME_DIR="$HOME"
 
 echo "================================================"
-echo " Claude Code Setup Installer"
+echo " Claudly — Claude Code Setup Installer"
 echo " User: $USERNAME | Home: $HOME_DIR"
 echo "================================================"
 echo ""
+
+# ── User email (for calendar/meeting skills) ─────────────────
+if [ -z "${USER_EMAIL:-}" ]; then
+  printf "  Primary email (for calendar/meeting skills, or Enter to skip): "
+  read -r USER_EMAIL
+fi
+USER_EMAIL="${USER_EMAIL:-user@example.com}"
 
 # ── API Key ──────────────────────────────────────────────────
 if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
@@ -39,27 +46,35 @@ info() { echo "  → $1"; }
 ok()   { echo "  ✓ $1"; }
 fail() { echo "  ✗ $1"; exit 1; }
 
-# Substitute __HOME__ and __USERNAME__ placeholders in a directory
+# Substitute __HOME__, __USERNAME__, __AGENTCRAFT__ placeholders in a directory
 apply_placeholders() {
   local dir="$1"
+  # Resolve agentcraft plugin path (npx cache hash is machine-specific)
+  local agentcraft_path=""
+  agentcraft_path=$(find "$HOME/.npm/_npx" -path "*/agentcraft/plugin/hooks" -type d 2>/dev/null | head -1 | sed 's|/plugin/hooks||')
+  if [ -z "$agentcraft_path" ]; then
+    # Pre-cache agentcraft so the path exists
+    npx -y @idosal/agentcraft --version >/dev/null 2>&1 || true
+    agentcraft_path=$(find "$HOME/.npm/_npx" -path "*/agentcraft/plugin/hooks" -type d 2>/dev/null | head -1 | sed 's|/plugin/hooks||')
+  fi
+  agentcraft_path="${agentcraft_path:-__AGENTCRAFT__}"
+
   find "$dir" -type f \( \
     -name "*.json" -o -name "*.sh" -o -name "*.cjs" \
     -o -name "*.js" -o -name "*.mjs" -o -name "*.ts" \
     -o -name "*.md" -o -name "*.yaml" -o -name "*.yml" \
   \) | while read -r f; do
-    # macOS sed needs '' after -i; Linux sed doesn't accept it
-    sed -i '' "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g" "$f" 2>/dev/null \
-      || sed -i "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g" "$f" 2>/dev/null \
+    sed -i '' "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g; s|__AGENTCRAFT__|$agentcraft_path|g; s|__USER_EMAIL__|$USER_EMAIL|g" "$f" 2>/dev/null \
+      || sed -i "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g; s|__AGENTCRAFT__|$agentcraft_path|g; s|__USER_EMAIL__|$USER_EMAIL|g" "$f" 2>/dev/null \
       || true
   done
 }
 
 # ── 1. Prerequisites ─────────────────────────────────────────
-echo "[1/7] Checking prerequisites..."
+echo "[1/8] Checking prerequisites..."
 if ! has brew; then
   info "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  # Apple Silicon: add brew to PATH for this session
   eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || true)"
 fi
 if ! has node; then
@@ -69,7 +84,7 @@ fi
 ok "Prerequisites ready"
 
 # ── 2. Claude Code ───────────────────────────────────────────
-echo "[2/7] Installing Claude Code..."
+echo "[2/8] Installing Claude Code..."
 if ! has claude; then
   npm install -g @anthropic-ai/claude-code
   ok "Claude Code installed"
@@ -78,7 +93,7 @@ else
 fi
 
 # ── 3. RTK ──────────────────────────────────────────────────
-echo "[3/7] Installing RTK (token optimizer)..."
+echo "[3/8] Installing RTK (token optimizer)..."
 if ! has rtk; then
   if has brew; then
     brew install rtk 2>/dev/null \
@@ -86,7 +101,6 @@ if ! has rtk; then
   else
     curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
   fi
-  # curl install goes to ~/.local/bin — add to PATH
   export PATH="$HOME/.local/bin:$PATH"
   grep -q '.local/bin' "$HOME/.zshrc" 2>/dev/null \
     || echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
@@ -96,9 +110,7 @@ else
 fi
 
 # ── 4. lean-ctx ─────────────────────────────────────────────
-# Must run BEFORE copying ~/.claude so it can register its MCP
-# via `claude mcp` (lean-ctx uses claude mcp registry, not settings.json)
-echo "[4/7] Installing lean-ctx..."
+echo "[4/8] Installing lean-ctx..."
 if ! has lean-ctx; then
   if has brew; then
     brew tap yvgude/lean-ctx 2>/dev/null && brew install lean-ctx
@@ -111,28 +123,23 @@ else
   ok "lean-ctx already installed"
 fi
 
-# Register lean-ctx MCP with Claude Code now (before our settings.json overwrites anything)
+# Register lean-ctx MCP with Claude Code (before settings.json is overwritten)
 lean-ctx init --agent claude 2>/dev/null && ok "lean-ctx MCP registered" \
   || info "lean-ctx MCP: run 'lean-ctx init --agent claude' manually if ctx_read tools missing"
 
 # ── 5. claude-flow + ruflo + MCPs ────────────────────────────
-echo "[5/7] Installing claude-flow, ruflo, MCPs..."
+echo "[5/8] Installing claude-flow, ruflo, MCPs..."
 
-# Binaries
 npm install -g @claude-flow/cli 2>/dev/null && ok "claude-flow installed" \
   || info "claude-flow: run 'npm i -g @claude-flow/cli' manually"
-npm install -g ruflo 2>/dev/null && ok "ruflo installed" \
-  || true
+npm install -g ruflo 2>/dev/null && ok "ruflo installed" || true
 
-# Register MCP servers (runs after claude-code is installed)
-# claude-flow provides mcp__claude-flow__* tools
 claude mcp add claude-flow "npx -y @claude-flow/cli@latest mcp start" 2>/dev/null \
   && ok "claude-flow MCP registered" || true
-# ruflo provides mcp__ruflo__* tools
 claude mcp add ruflo "npx -y ruflo@latest mcp start" 2>/dev/null \
   && ok "ruflo MCP registered" || true
 
-# screen-vision MCP (desktop screenshot tools)
+# screen-vision MCP
 SCREEN_VISION_DIR="$HOME/.claude/mcp-servers/screen-vision-mcp"
 if [ ! -d "$SCREEN_VISION_DIR" ]; then
   info "Installing screen-vision MCP..."
@@ -159,17 +166,14 @@ elif has brew; then
 fi
 
 # ── 6. ~/.claude config ──────────────────────────────────────
-echo "[6/7] Setting up Claude Code config..."
+echo "[6/8] Setting up Claude Code config..."
 
-# Backup existing config if present
 if [ -d "$HOME/.claude" ]; then
   BACKUP="$HOME/.claude.backup.$(date +%Y%m%d_%H%M%S)"
   info "Backing up existing ~/.claude → $BACKUP"
   cp -r "$HOME/.claude" "$BACKUP"
 fi
 
-# Clean install: rsync --delete ensures no stale files from old config survive
-# --exclude preserves runtime state that should not be overwritten
 rsync -a --delete \
   --exclude='projects/' \
   --exclude='.claude-flow/sessions/' \
@@ -178,31 +182,65 @@ rsync -a --delete \
   --exclude='telemetry/' \
   --exclude='paste-cache/' \
   --exclude='file-history/' \
+  --exclude='mcp-servers/' \
+  --exclude='plugins/' \
+  --exclude='settings.local.json' \
+  --exclude='history.jsonl' \
+  --exclude='learning/' \
+  --exclude='patches/' \
+  --exclude='sessions/' \
+  --exclude='cache/' \
+  --exclude='shell-snapshots/' \
+  --exclude='backups/' \
   "$REPO_DIR/claude/" "$HOME/.claude/"
 
 apply_placeholders "$HOME/.claude"
 
 chmod +x "$HOME/.claude/helpers/"*.sh   2>/dev/null || true
+chmod +x "$HOME/.claude/helpers/"*.cjs  2>/dev/null || true
+chmod +x "$HOME/.claude/helpers/"*.mjs  2>/dev/null || true
 chmod +x "$HOME/.claude/hooks/"*.sh     2>/dev/null || true
+chmod +x "$HOME/.claude/hooks/"*.js     2>/dev/null || true
+chmod +x "$HOME/.claude/hooks/"*.cjs    2>/dev/null || true
 chmod +x "$HOME/.claude/scripts/"*.sh   2>/dev/null || true
 chmod +x "$HOME/.claude/get-shit-done/bin/"*.cjs 2>/dev/null || true
 
-chmod +x "$HOME/.claude/tools/gan-loop/run.sh" 2>/dev/null || true
-chmod +x "$HOME/.claude/tools/gan-loop/gan-classifier.sh" 2>/dev/null || true
+# Create runtime directories
+mkdir -p "$HOME/.claude/logs"
+mkdir -p "$HOME/.claude/helpers/janitor/logs"
 
-ok "Claude Code config + GAN loop installed"
+ok "Claude Code config installed"
 
-# ── 7. Obsidian ──────────────────────────────────────────────
-echo "[7/7] Setting up Obsidian..."
+# ── 7. Plugins ──────────────────────────────────────────────
+echo "[7/8] Installing Claude Code plugins..."
+
+# Plugins auto-install on first Claude session when defined in settings.json
+# Force immediate install for key plugins
+info "Plugins will auto-install on first 'claude' run (caveman, codex, impeccable, karpathy-skills, stripe, vercel)"
+ok "Plugin config ready"
+
+# ── 8. Obsidian ──────────────────────────────────────────────
+echo "[8/8] Setting up Obsidian..."
 VAULT_DIR="$HOME/Desktop/Labirynt"
 
 if [ -d "$VAULT_DIR" ]; then
-  info "Vault already exists at $VAULT_DIR — skipping"
+  info "Vault already exists at $VAULT_DIR — skipping copy"
+  # Still update CLAUDE.md governance file if vault exists
+  cp "$REPO_DIR/obsidian/CLAUDE.md" "$VAULT_DIR/CLAUDE.md" 2>/dev/null || true
 else
   cp -r "$REPO_DIR/obsidian/vault/" "$VAULT_DIR/"
   cp "$REPO_DIR/obsidian/CLAUDE.md" "$VAULT_DIR/CLAUDE.md" 2>/dev/null || true
 
-  # Download Excalidraw main.js (8MB binary not tracked in git)
+  # Create Domain Knowledge structure
+  for domain_dir in "$VAULT_DIR/3 Atlas/Domains"; do
+    mkdir -p "$domain_dir"
+    [ -f "$domain_dir/INDEX.md" ] || echo "# Domain Index" > "$domain_dir/INDEX.md"
+  done
+
+  # Create vault-log.md for AI operations audit trail
+  [ -f "$VAULT_DIR/vault-log.md" ] || echo "# Vault Operations Log" > "$VAULT_DIR/vault-log.md"
+
+  # Download Excalidraw plugin binary (8MB, not tracked in git)
   EXCALIDRAW_DIR="$VAULT_DIR/.obsidian/plugins/obsidian-excalidraw-plugin"
   EXCALIDRAW_VER="2.22.0"
   if [ -d "$EXCALIDRAW_DIR" ] && [ ! -f "$EXCALIDRAW_DIR/main.js" ]; then
@@ -225,21 +263,32 @@ else
 fi
 
 # ── lean-ctx shell hook ──────────────────────────────────────
-# lean-ctx init (no flags) installs shell aliases only — does not touch settings.json
 lean-ctx init 2>/dev/null \
   && ok "lean-ctx shell aliases installed" \
   || info "lean-ctx shell hook: run 'lean-ctx init' manually"
 
-# ── Cron jobs ────────────────────────────────────────────────
+# ── Graphify weekly cron (launchd) ───────────────────────────
 echo ""
+echo "[post-install] Setting up graphify weekly cron..."
+PLIST_SRC="$REPO_DIR/launch-agents/net.graphify.labirynt.plist"
+PLIST_DST="$HOME/Library/LaunchAgents/net.graphify.labirynt.plist"
+if [ -f "$PLIST_SRC" ]; then
+  mkdir -p "$HOME/Library/LaunchAgents"
+  # Apply placeholders to plist
+  sed "s|__HOME__|$HOME_DIR|g; s|__USERNAME__|$USERNAME|g" "$PLIST_SRC" > "$PLIST_DST"
+  launchctl unload "$PLIST_DST" 2>/dev/null || true
+  launchctl load "$PLIST_DST" 2>/dev/null \
+    && ok "Graphify weekly launchd agent installed" \
+    || info "launchd load failed — graphify will still work via /graphify skill"
+fi
+
+# ── Cron jobs ────────────────────────────────────────────────
 echo "[post-install] Setting up cron jobs..."
 NODE_BIN="$(which node 2>/dev/null || echo node)"
 CLAUDE="$HOME/.claude"
 
-# Remove any existing Claudly cron entries to avoid duplicates
 ( crontab -l 2>/dev/null | grep -v "# Claudly\|ruflo-weekly\|ruflo-hygiene\|ruflo-monthly\|skill-map\|nightly-maintenance\|monthly-rule\|weekly-health\|inbox-nudge\|janitor/orchestrator" ) | crontab - 2>/dev/null || true
 
-# Install fresh cron entries
 (
   crontab -l 2>/dev/null
   cat <<CRON
@@ -263,10 +312,8 @@ CLAUDE="$HOME/.claude"
 0 9 * * * bash $CLAUDE/helpers/inbox-nudge.sh >> $CLAUDE/logs/inbox-nudge.log 2>&1
 CRON
 ) | crontab - 2>/dev/null \
-  && ok "9 cron jobs installed (weekly review, hygiene, maintenance, janitor...)" \
+  && ok "9 cron jobs installed" \
   || info "Cron setup failed — run 'crontab -e' manually (see GETTING_STARTED.md)"
-
-mkdir -p "$HOME/.claude/logs"
 
 # ── Done ─────────────────────────────────────────────────────
 echo ""
@@ -275,14 +322,26 @@ echo " Setup complete!"
 echo ""
 echo " Verify installation:"
 echo "   claude --version"
-echo "   rtk gain"
-echo "   rtk --version"
+echo "   rtk --version && rtk gain"
 echo "   lean-ctx --version"
+echo "   claude mcp list"
 echo ""
 echo " First steps:"
 echo "   1. Restart terminal  (shell hooks activate on new session)"
 echo "   2. Open Obsidian → Open folder as vault → $VAULT_DIR"
 echo "      Enable community plugins when prompted"
 echo "   3. Run: claude"
-echo "   4. Read: GETTING_STARTED.md in this repo"
+echo "   4. Type /graphify to build initial knowledge graph"
+echo "   5. Read: GETTING_STARTED.md in this repo"
+echo ""
+echo " What's installed:"
+echo "   - Claude Code CLI + 226 skills + 40 agents"
+echo "   - RTK token optimizer (60-90% savings)"
+echo "   - lean-ctx context engineering layer"
+echo "   - claude-flow + ruflo + 4 MCP servers"
+echo "   - Obsidian vault with 8 plugins + templates"
+echo "   - 9 automated cron jobs"
+echo "   - 50+ hooks (pre/post tool, session, routing)"
+echo "   - GSD (Get Shit Done) framework"
+echo "   - Domain knowledge loop + graphify"
 echo "================================================"

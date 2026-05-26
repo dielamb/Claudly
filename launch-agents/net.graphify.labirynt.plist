@@ -8,7 +8,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/Users/michalmaciejewski/.claude/scripts/graphify-labirynt-weekly.sh</string>
+        <string>__HOME__/.claude/scripts/graphify-labirynt-weekly.sh</string>
     </array>
 
     <key>StartCalendarInterval</key>
@@ -25,18 +25,18 @@
     <false/>
 
     <key>StandardOutPath</key>
-    <string>/Users/michalmaciejewski/.claude/scripts/logs/graphify-launchd.out</string>
+    <string>__HOME__/.claude/scripts/logs/graphify-launchd.out</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/michalmaciejewski/.claude/scripts/logs/graphify-launchd.err</string>
+    <string>__HOME__/.claude/scripts/logs/graphify-launchd.err</string>
 
     <key>WorkingDirectory</key>
-    <string>/Users/michalmaciejewski/Desktop/Labirynt</string>
+    <string>__HOME__/Desktop/Labirynt</string>
 
     <key>EnvironmentVariables</key>
     <dict>
         <key>HOME</key>
-        <string>/Users/michalmaciejewski</string>
+        <string>__HOME__</string>
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
     </dict>

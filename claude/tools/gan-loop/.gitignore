@@ -1,7 +1,0 @@
-# Volatile data — not tracked in clean install repo
-runs/
-.logs/
-output/
-viewer-data.js
-briefs/
-rubrics/

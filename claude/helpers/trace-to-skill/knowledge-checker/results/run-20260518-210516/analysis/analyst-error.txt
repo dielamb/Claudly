@@ -1,0 +1,19 @@
+# ERROR ANALYST OUTPUT
+# Generated: 2026-05-19T11:05:00.000Z
+# Exit code: 0
+
+RULE: Jaccard similarity threshold too strict for Polish compound phrases and project names — single-word prompts like "Avocado" fail to match stored keys that contain full project context strings | EVIDENCE: RUN 2, RUN 11 | PRIORITY: high
+
+RULE: Polish-language prompts with no English loanwords return empty context because keyword extractor tokenizes on ASCII-dominant vocabulary, missing inflected Polish verbs and nouns (e.g., "działa", "przechodzą", "responsywnosc") | EVIDENCE: RUN 3, RUN 7, RUN 8, RUN 12, RUN 13 | PRIORITY: high
+
+RULE: Technical task prompts that describe coding actions (write test, fix bug, update deps, add animation) are skipped as non-retrieval prompts — enrichment logic classifies imperative-mode prompts as "do not enrich" rather than using them to inject project context | EVIDENCE: RUN 5, RUN 6, RUN 14, RUN 16, RUN 17 | PRIORITY: high
+
+RULE: Person-name queries (first-name-only Polish names like "Inga") either return empty or trigger wrong domain context — enrichment has no person-entity extractor and falls back to unrelated high-salience stored context | EVIDENCE: RUN 10, RUN 15 | PRIORITY: high
+
+RULE: Infrastructure and operations prompts (AWS, deployment, backup, merge checks) produce no context injection — domain classifier lacks DevOps/cloud keyword vocabulary in Polish transliteration ("zaloguj się do AWS", "zrób backup") | EVIDENCE: RUN 19, RUN 20, RUN 8 | PRIORITY: medium
+
+RULE: When KEYWORDS_MATCHED is empty and OUTPUT_LENGTH is 0, enrichment silently skips rather than logging a miss — absence of fallback retrieval path means any tokenization failure produces total context dropout with no diagnostic signal | EVIDENCE: RUN 2, RUN 3, RUN 5, RUN 6, RUN 7, RUN 8, RUN 11, RUN 12, RUN 13, RUN 14, RUN 15, RUN 16, RUN 17, RUN 19, RUN 20 | PRIORITY: high
+
+RULE: False-positive injection (wrong context surfaced) occurs when no domain-specific match is found but a high-weight stored entry (dreamer/agent rules) is returned as default fallback — fallback must require minimum relevance score, not return highest-salience stored entry unconditionally | EVIDENCE: RUN 10 | PRIORITY: medium
+
+RULE: Prompt language detection is not triggering a Polish-aware stemmer or lemmatizer — Polish morphology changes word stems significantly ("commitowałem", "przechodzą", "zoptymalizuj") so root-form matching against stored English-keyed memory entries always scores zero | EVIDENCE: RUN 8, RUN 11, RUN 12 | PRIORITY: high

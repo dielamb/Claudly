@@ -98,6 +98,12 @@ const handlers = {
       try {
         const ctx = intelligence.getContext(prompt);
         if (ctx) console.log(ctx);
+
+        // Emit hint so Claude can proactively call mcp__claude-flow__memory_search_unified
+        // when [INTELLIGENCE] patterns are unrelated to the task (see CLAUDE.md rule).
+        if (prompt && prompt.trim()) {
+          console.log(`[MEMORY_SEARCH_HINT: ${prompt.trim().slice(0, 120)}]`);
+        }
       } catch (e) { /* non-fatal */ }
     }
 

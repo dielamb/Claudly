@@ -1,0 +1,7 @@
+# Graphify ignore patterns for Labirynt vault
+# Prevents graphify from indexing its own output and Obsidian internals
+
+graphify-out/
+.obsidian/
+.trash/
+Attachments/

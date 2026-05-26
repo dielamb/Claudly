@@ -25,10 +25,18 @@ const DATA_DIR = path.join(HOME, '.claude-flow', 'data');
 const RANKED_PATH = path.join(DATA_DIR, 'ranked-context.json');
 const LOG_PATH = path.join(HOME, 'logs', 'project-scope-filter.log');
 
+// Read cwd from UserPromptSubmit stdin JSON (like prompt-enrichment.sh)
+let INPUT_CWD = '';
+try {
+  const raw = fs.readFileSync('/dev/stdin', 'utf-8');
+  const parsed = JSON.parse(raw);
+  INPUT_CWD = parsed.cwd || '';
+} catch { /* SessionStart fallback or stdin unavailable */ }
+
 // Known project paths → project slug
-// Add entries here as projects grow
 const PROJECT_ROOTS = [
   { pattern: /\/www[-_]?v2\b/i, slug: 'www_v2' },
+  { pattern: /\/www[-_]?v3\b/i, slug: 'www_v3' },
   { pattern: /\/lazy[-_]?divines\b/i, slug: 'lazy_divines' },
   { pattern: /\/portfolio\b/i, slug: 'portfolio' },
   { pattern: /\/bsh\b/i, slug: 'bsh' },
@@ -45,7 +53,7 @@ function log(msg) {
 }
 
 function detectCurrentProject() {
-  const cwd = process.cwd();
+  const cwd = INPUT_CWD || process.cwd();
   for (const { pattern, slug } of PROJECT_ROOTS) {
     if (pattern.test(cwd)) return slug;
   }
@@ -84,8 +92,7 @@ function main() {
 
   const currentProject = detectCurrentProject();
   if (!currentProject) {
-    log(`cwd=${process.cwd()} — no project match, no scope filter applied`);
-    console.log('[PROJECT-SCOPE] no project detected — neutral');
+    // No project context (home dir, vault, unknown) — neutral, exit silently
     process.exit(0);
   }
 

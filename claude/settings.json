@@ -31,24 +31,21 @@
       "WebFetch(domain:api.scryfall.com)",
       "WebFetch(domain:skillsmp.com)",
       "Bash(lsof -i :8734*)",
-      "Bash(curl -s -o /dev/null -w *http://localhost:8734*)",
-      "Write(/Users/michalmaciejewski/.claude/tools/gan-loop/**)",
-      "Edit(/Users/michalmaciejewski/.claude/tools/gan-loop/**)",
-      "Bash(git -C /Users/michalmaciejewski/.claude/tools/gan-loop*)"
+      "Bash(curl -s -o /dev/null -w *http://localhost:8734*)"
     ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)"
     ]
   },
-  "hooks": {
+    "hooks": {
     "PreToolUse": [
       {
         "matcher": ".*",
         "hooks": [
           {
             "type": "command",
-            "command": "bash /Users/michalmaciejewski/.claude/helpers/kill-switch.sh",
+            "command": "bash __HOME__/.claude/helpers/kill-switch.sh",
             "timeout": 2000
           }
         ]
@@ -58,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" pre-bash'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" pre-bash'",
             "timeout": 5000
           },
           {
@@ -91,7 +88,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" pre-edit'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" pre-edit'",
             "timeout": 5000
           }
         ]
@@ -101,7 +98,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/hooks/gsd-prompt-guard.js\"",
+            "command": "node \"__HOME__/.claude/hooks/gsd-prompt-guard.js\"",
             "timeout": 5
           }
         ]
@@ -111,7 +108,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/hooks/gsd-read-guard.js\"",
+            "command": "node \"__HOME__/.claude/hooks/gsd-read-guard.js\"",
             "timeout": 5
           }
         ]
@@ -121,7 +118,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/hooks/gsd-workflow-guard.js\"",
+            "command": "node \"__HOME__/.claude/hooks/gsd-workflow-guard.js\"",
             "timeout": 5
           }
         ]
@@ -131,7 +128,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /Users/michalmaciejewski/.claude/hooks/gsd-validate-commit.sh",
+            "command": "bash __HOME__/.claude/hooks/gsd-validate-commit.sh",
             "timeout": 5
           }
         ]
@@ -141,7 +138,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-subagent-spawn.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-subagent-spawn.js\""
           }
         ]
       },
@@ -150,7 +147,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-subagent-spawn.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-subagent-spawn.js\""
           }
         ]
       },
@@ -159,7 +156,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-awaiting-input.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-awaiting-input.js\""
           }
         ]
       },
@@ -168,7 +165,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-permission-request.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-permission-request.js\""
           }
         ]
       },
@@ -177,11 +174,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-git-guard.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-git-guard.js\""
           },
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-bash-command.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-bash-command.js\""
           }
         ]
       },
@@ -190,7 +187,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-file-access.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-file-access.js\""
           }
         ]
       },
@@ -199,7 +196,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-file-access.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-file-access.js\""
           }
         ]
       },
@@ -208,7 +205,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-file-access.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-file-access.js\""
           }
         ]
       }
@@ -219,7 +216,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" post-edit'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" post-edit'",
             "timeout": 10000
           }
         ]
@@ -229,7 +226,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" post-bash'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" post-bash'",
             "timeout": 5000
           }
         ]
@@ -239,7 +236,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/hooks/gsd-context-monitor.js\"",
+            "command": "node \"__HOME__/.claude/hooks/gsd-context-monitor.js\"",
             "timeout": 10
           }
         ]
@@ -249,7 +246,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /Users/michalmaciejewski/.claude/hooks/gsd-phase-boundary.sh",
+            "command": "bash __HOME__/.claude/hooks/gsd-phase-boundary.sh",
             "timeout": 5
           }
         ]
@@ -259,7 +256,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/vault-quality-checker.cjs\"",
+            "command": "node \"__HOME__/.claude/helpers-user/vault-quality-checker.cjs\"",
             "timeout": 2000
           }
         ]
@@ -269,7 +266,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-input-received.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-input-received.js\""
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/hooks/gsd-read-tracker.js\"",
+            "timeout": 3000
           }
         ]
       }
@@ -279,7 +286,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/michalmaciejewski/.claude/tools/gan-loop/gan-classifier.sh",
+            "command": "__HOME__/.claude/hooks/prompt-enrichment.sh",
             "timeout": 5000
           }
         ]
@@ -288,16 +295,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/michalmaciejewski/.claude/hooks/prompt-enrichment.sh",
-            "timeout": 5000
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" route'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" route'",
             "timeout": 10000
           }
         ]
@@ -306,7 +304,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/synthesis-context-injector.cjs\"",
+            "command": "node \"__HOME__/.claude/helpers-user/synthesis-context-injector.cjs\"",
             "timeout": 3000
           }
         ]
@@ -315,7 +313,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/url-ingest-detector.cjs\"",
+            "command": "node \"__HOME__/.claude/helpers-user/url-ingest-detector.cjs\"",
             "timeout": 3000
           }
         ]
@@ -325,7 +323,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl -s --max-time 1 -X POST http://localhost:8741/message -H 'Content-Type: application/json' -d '{\"type\":\"thinking\",\"text\":\"Pracuję...\",\"context\":\"\"}' > /dev/null 2>&1 || true",
+            "command": "curl -s --max-time 1 -X POST http://localhost:7337/message -H 'Content-Type: application/json' -d '{\"type\":\"thinking\",\"text\":\"Pracuję...\",\"context\":\"\"}' > /dev/null 2>&1 || true",
             "timeout": 2000
           }
         ]
@@ -334,7 +332,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-hero-active.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-hero-active.js\""
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers-user/project-scope-filter.cjs\"",
+            "timeout": 3000
           }
         ]
       }
@@ -344,7 +351,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"/Users/michalmaciejewski/.claude/helpers-user/verify-integrity.sh\"",
+            "command": "touch ~/.claude/AUTO_TLDR_DISABLED",
+            "timeout": 1000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"__HOME__/.claude/helpers-user/verify-integrity.sh\"",
             "timeout": 5000
           }
         ]
@@ -353,7 +369,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" session-restore'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" session-restore'",
             "timeout": 15000
           }
         ]
@@ -362,7 +378,25 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers/auto-memory-hook.mjs\" import",
+            "command": "node \"__HOME__/.claude/helpers-user/obsidian-vault-indexer.cjs\"",
+            "timeout": 15000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers-user/dreamer-rules-indexer.cjs\"",
+            "timeout": 10000
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"__HOME__/.claude/helpers/auto-memory-hook.mjs\" import",
             "timeout": 30000
           }
         ]
@@ -371,7 +405,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"/Users/michalmaciejewski/.claude/helpers/learning-hooks.sh\" session-start",
+            "command": "bash \"__HOME__/.claude/helpers/learning-hooks.sh\" session-start",
             "timeout": 10000
           }
         ]
@@ -380,7 +414,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/obsidian-extended-loader.cjs\"",
+            "command": "node \"__HOME__/.claude/helpers-user/obsidian-extended-loader.cjs\"",
             "timeout": 10000
           }
         ]
@@ -389,7 +423,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/graphify-intelligence.cjs\"",
+            "command": "node \"__HOME__/.claude/helpers-user/graphify-intelligence.cjs\"",
             "timeout": 10000
           }
         ]
@@ -398,7 +432,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/quality-rescorer.cjs\"",
+            "command": "node \"__HOME__/.claude/helpers-user/quality-rescorer.cjs\"",
             "timeout": 10000
           }
         ]
@@ -407,8 +441,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/project-scope-filter.cjs\"",
-            "timeout": 3000
+            "command": "node \"__HOME__/.claude/hooks/gsd-check-update.js\""
           }
         ]
       },
@@ -416,7 +449,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/hooks/gsd-check-update.js\""
+            "command": "bash __HOME__/.claude/hooks/gsd-session-state.sh"
           }
         ]
       },
@@ -424,24 +457,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash /Users/michalmaciejewski/.claude/hooks/gsd-session-state.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/synthesis-context-injector.cjs\"",
-            "timeout": 5000
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-hero-spawn.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-hero-spawn.js\""
           }
         ]
       }
@@ -451,7 +467,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" session-end'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" session-end'",
             "timeout": 10000
           }
         ]
@@ -460,7 +476,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers-user/router-retention.cjs\"",
+            "command": "node \"__HOME__/.claude/helpers-user/router-retention.cjs\"",
             "timeout": 3000
           }
         ]
@@ -469,7 +485,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers/ewc-consolidate.mjs\"",
+            "command": "node \"__HOME__/.claude/helpers/ewc-consolidate.mjs\"",
             "timeout": 10000
           }
         ]
@@ -478,7 +494,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"/Users/michalmaciejewski/.claude/helpers/learning-hooks.sh\" session-end",
+            "command": "bash \"__HOME__/.claude/helpers/learning-hooks.sh\" session-end",
             "timeout": 15000
           }
         ]
@@ -490,11 +506,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" compact-manual'"
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" compact-manual'"
           },
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" session-end'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" session-end'",
             "timeout": 5000
           }
         ]
@@ -504,11 +520,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" compact-auto'"
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" compact-auto'"
           },
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" session-end'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" session-end'",
             "timeout": 6000
           }
         ]
@@ -519,7 +535,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" status'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" status'",
             "timeout": 3000
           }
         ]
@@ -530,7 +546,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" post-task'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" post-task'",
             "timeout": 5000
           }
         ]
@@ -539,7 +555,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-subagent-complete.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-subagent-complete.js\""
           }
         ]
       }
@@ -549,7 +565,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" notify'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" notify'",
             "timeout": 3000
           }
         ]
@@ -560,7 +576,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" session-end'",
+            "command": "sh -c 'exec node \"__HOME__/.claude/helpers/hook-handler.cjs\" session-end'",
             "timeout": 8000
           }
         ]
@@ -569,16 +585,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers/auto-memory-hook.mjs\" sync",
-            "timeout": 15000
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers/hook-handler.cjs\" post-task",
+            "command": "node \"__HOME__/.claude/helpers/hook-handler.cjs\" post-task",
             "timeout": 10000
           }
         ]
@@ -587,7 +594,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.claude/helpers/sona-trigger.mjs\"",
+            "command": "node \"__HOME__/.claude/helpers/sona-trigger.mjs\"",
             "timeout": 8000
           }
         ]
@@ -597,7 +604,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "curl -s --max-time 1 -X POST http://localhost:8741/message -H 'Content-Type: application/json' -d '{\"type\":\"idle\",\"text\":\"Czekam na kolejne zadanie.\",\"context\":\"\"}' > /dev/null 2>&1 || true",
+            "command": "curl -s --max-time 1 -X POST http://localhost:7337/message -H 'Content-Type: application/json' -d '{\"type\":\"idle\",\"text\":\"Czekam na kolejne zadanie.\",\"context\":\"\"}' > /dev/null 2>&1 || true",
             "timeout": 2000
           }
         ]
@@ -606,7 +613,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-hero-idle.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-hero-idle.js\""
           }
         ]
       }
@@ -616,7 +623,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"/Users/michalmaciejewski/.npm/_npx/6bf25bc83f26a9ed/node_modules/@idosal/agentcraft/plugin/hooks/agentcraft-permission-request.js\""
+            "command": "node \"__AGENTCRAFT__/plugin/hooks/agentcraft-permission-request.js\""
           }
         ]
       }
@@ -624,11 +631,15 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "sh -c 'exec node \"/Users/michalmaciejewski/.claude/helpers/statusline.cjs\"'"
+    "command": "sh -c 'exec node \"__HOME__/.claude/helpers/statusline.cjs\"'"
   },
   "enabledPlugins": {
     "caveman@caveman": true,
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "andrej-karpathy-skills@karpathy-skills": true,
+    "impeccable@impeccable": true,
+    "stripe@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -643,6 +654,19 @@
         "repo": "openai/codex-plugin-cc"
       },
       "autoUpdate": true
+    },
+    "impeccable": {
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
+      },
+      "autoUpdate": true
+    },
+    "karpathy-skills": {
+      "source": {
+        "source": "github",
+        "repo": "forrestchang/andrej-karpathy-skills"
+      }
     }
   },
   "skipDangerousModePermissionPrompt": true,

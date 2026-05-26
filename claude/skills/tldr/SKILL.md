@@ -19,7 +19,7 @@ When the user invokes /tldr, do a FULL extraction. Not a summary — a knowledge
 Read the FULL conversation. For each distinct topic/problem worked on, identify:
 
 **Frustration signals:** repeated attempts, rollbacks, "nie tak", "kurwa", "cofamy", "znowu", negative language, same file edited 3+ times
-**Breakthrough signals:** "tak"/"yes", "działa"/"works", "właśnie o to chodzi"/"that's exactly it", forward movement after struggle, commit after loop, user approval
+**Breakthrough signals:** "tak", "działa", "właśnie o to chodzi", forward movement after struggle, commit after loop, user approval
 
 Map each topic to one of:
 - `quality: high` — struggled then solved, non-obvious solution, worth remembering
@@ -41,7 +41,7 @@ Match commits to topics. The commit AFTER a frustration loop = `breakthrough_com
 - If YES: update `quality:` and `breakthrough_commit:` in frontmatter only
 - If NO: create new file using `tpl-problem-solution.md` template with filled `quality:` and `breakthrough_commit:`
 
-**Decision made** (signals: "we're going with X", "I decided", "it stays", "we're removing"):
+**Decision made** (signals: "idziemy z X", "zdecydowałem", "zostaje", "usuwamy"):
 - Append to `~/Desktop/Labirynt/3 Atlas/Career/Decisions.md`
 
 **New tool/pattern discovered:**
@@ -56,13 +56,13 @@ Match commits to topics. The commit AFTER a frustration loop = `breakthrough_com
 ## Step 4: Write daily note summary
 
 Find or create `~/Desktop/Labirynt/1 Calendar/YYYY-MM-DD.md`.
-Append under `## Claude Sessions`:
+Append under `## Sesje z Claude`:
 
 ```markdown
 ### Session [HH:MM]
-**Project:** [main project]
-**Done:** [2-4 bullet points max]
-**Saved:** [list of files created/updated in vault — filenames only]
+**Projekt:** [main project]
+**Zrobiono:** [2-4 bullet points max]
+**Zapisano:** [list of files created/updated in vault — filenames only]
 ```
 
 Keep under 100 words. The details are in the individual notes.
@@ -75,14 +75,14 @@ Tell the user:
 - Where decisions were saved
 - Any gaps (things that happened but couldn't be categorized)
 
-Follow vault CLAUDE.md rules for tags and wikilinks.
+Format responses in Polish. Follow vault CLAUDE.md rules for tags and wikilinks.
 
-## Step 6: Trigger dream worker
+<!-- Step 6 (dream worker trigger) removed 2026-05-05.
+     Reason: /tldr = single-session harvest, dream-worker = batch pattern detection across 3+ sessions.
+     Logical mismatch — worker's own rule says "1 session = noise". Also resetting cooldown broke
+     the natural 4h gate enforced by helpers/hook-handler.cjs:344, which already auto-triggers
+     the worker on session-end when conditions are met. -->
 
-After reporting back, run this Bash command silently in background — do not mention it to user unless it fails:
+Invoke /tldr once per session only. Multiple invocations in same session indicate first extraction didn't capture user's mental model — ask what was missing instead of re-running.
+<!-- dream 2026-05-05 -->
 
-```bash
-echo "" > ~/.claude/learning/last-dream.txt && node ~/.claude/helpers/dream-worker.js >> ~/.claude/learning/dream-worker.log 2>&1 &
-```
-
-This resets the 4h cooldown and runs the dreamer on fresh session data while signals are hot.

@@ -12,10 +12,10 @@ LOG_FILE="$LOG_DIR/graphify-labirynt-$(date +%Y-%m).log"
 mkdir -p "$LOG_DIR"
 
 # Hardcoded PATH so claude, node work under launchd (no shell rc files)
-export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$HOME/.npm-global/bin:$PATH"
+export PATH="$HOME/.nvm/versions/node/v24.15.0/bin:$HOME/.bun/bin:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:$HOME/.npm-global/bin"
 
 # Autonomous prompt - tells Claude not to ask questions during unattended run
-PROMPT='Run /graphify . --update on the current working directory (the Labirynt Obsidian vault). This is an automated weekly scheduled run with NO user present. Rules: (1) do not ask any clarifying questions — if the skill offers choices, pick the most conservative option and proceed; (2) exclude graphify-out/ from scanning (already in .graphifyignore); (3) if no baseline graph exists, do a full rebuild with --obsidian flag writing the vault to graphify-out/; (4) if update succeeds, report a one-line summary. Proceed immediately.'
+PROMPT="Run /graphify --update on the Obsidian vault at $HOME/Desktop/Labirynt. This is an automated weekly scheduled run with NO user present. Rules: (1) do not ask any clarifying questions — if the skill offers choices, pick the most conservative option and proceed; (2) exclude graphify-out/ from scanning (already in .graphifyignore); (3) if no baseline graph exists, do a full rebuild with --obsidian flag writing the vault to graphify-out/; (4) if update succeeds, report a one-line summary. Proceed immediately."
 
 {
   echo "=== graphify labirynt weekly run: $(date) ==="

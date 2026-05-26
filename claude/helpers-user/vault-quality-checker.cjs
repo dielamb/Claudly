@@ -76,7 +76,7 @@ function suggestQuality(content) {
   const strugglePhrases = [
     /\bfinally\b/i, /\bwreszcie\b/i,
     /\bafter\s+\d+\s*(h|hour|godz)/i, /\bpo\s+\d+\s*(h|godz)/i,
-    /\bbreakthrough\b/i, /\bprzełom/i  // przełom = Polish: breakthrough
+    /\bbreakthrough\b/i, /\bprzełom/i
   ];
   const struggleHits = strugglePhrases.filter(p => p.test(lower)).length;
 

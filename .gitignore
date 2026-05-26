@@ -44,11 +44,34 @@ claude/history.jsonl
 claude/last-session.json
 claude/settings.local.json
 
-# ── GAN Loop runtime state ────────────────────────────────────
-gan-loop/.claude-flow/
-gan-loop/.logs/
-gan-loop/output/
-gan-loop/runs/
+# ── Runtime state ─────────────────────────────────────────────
+claude/active-agents.json
+claude/daemon.lock
+claude/daemon.log
+claude/daemon.status.json
+claude/scheduled_tasks.lock
+claude/agentdb.rvf
+claude/agentdb.rvf.lock
+claude/ruvector.db
+claude/.caveman-active
+claude/stats-cache.json
+claude/mcp-needs-auth-cache.json
+claude/read-guard-state/
+claude/learning/
+claude/patches/
+claude/backups/
+claude/sessions/
+claude/cache/
+claude/shell-snapshots/
+claude/debug/
+claude/jobs/
+claude/.swarm/
+claude/helpers/janitor/logs/
+claude/helpers/janitor/reports/
+claude/helpers/janitor/.claude-flow/
+claude/helpers/swarm-state.json
+claude/helpers/wikilink-warnings.txt
+claude/tools/
 
 # ── Node / Python ─────────────────────────────────────────────
 node_modules/

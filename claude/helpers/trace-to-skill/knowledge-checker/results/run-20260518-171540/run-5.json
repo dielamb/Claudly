@@ -1,0 +1,12 @@
+{
+  "runIndex": 5,
+  "prompt": "css animations transition timing function",
+  "cwd": "__HOME__",
+  "expected_pass": "true",
+  "actual_result": "PASS",
+  "keywords_matched": [
+    "css-animations"
+  ],
+  "output_length": 4945,
+  "raw_output": "{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"UserPromptSubmit\",\n    \"additionalContext\": \"<prior-knowledge>\\n[INTELLIGENCE] Relevant patterns for this task:\\n  * (0.18) JS style.transition='none' Blocks CSS Exiting Animation [rank #1, 0x accessed]\\n  * (0.16) transition-delay zamiast setTimeout chains [rank #2, 0x accessed]\\n  * (0.16) Exit Jump Bug (CS01/CS02 Scroll) [rank #3, 0x accessed]\\n\\n## Domain Rules (css-animations)\\n# css-animations — Rules\\n\\nRules confirmed 3+ times. Apply by default.\\n\\n---\\n\\n**RULE-001: stroke-draw.js data-delay unit is seconds, not milliseconds**\\n`data-delay=\\\"0.2\\\"` = 200ms delay. `data-delay=\\\"200\\\"` = 200 second delay.\\nApplies to: any `[data-stroke-draw]` element.\\nSource: confirmed in this session (2026-04-24) when hero-line had `data-delay=\\\"200\\\"` causing broken animation sequence.\\n\\n## Domain Hypotheses (css-animations) — current confirmation counts\\n# css-animations — Hypotheses\\n\\nUnconfirmed theories. Each needs 3 confirmations to pro"
+}

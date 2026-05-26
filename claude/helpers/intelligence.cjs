@@ -67,9 +67,16 @@ function writeJSON(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
+function normalizePL(text) {
+  return text
+    .replace(/ą/gi, 'a').replace(/ę/gi, 'e').replace(/ó/gi, 'o')
+    .replace(/ś/gi, 's').replace(/ć/gi, 'c').replace(/ż/gi, 'z')
+    .replace(/ź/gi, 'z').replace(/ł/gi, 'l').replace(/ń/gi, 'n');
+}
+
 function tokenize(text) {
   if (!text) return [];
-  return text.toLowerCase()
+  return normalizePL(text.toLowerCase())
     .replace(/[^a-z0-9\s-]/g, ' ')
     .split(/\s+/)
     .filter(w => w.length > 2 && !STOP_WORDS.has(w));
@@ -88,6 +95,40 @@ function jaccardSimilarity(setA, setB) {
   let intersection = 0;
   for (const item of setA) { if (setB.has(item)) intersection++; }
   return intersection / (setA.size + setB.size - intersection);
+}
+
+// ── BM25 scoring ─────────────────────────────────────────────────────────────
+const BM25_K1 = 1.5;
+const BM25_B  = 0.75;
+
+function buildIDF(entries) {
+  const N = entries.length;
+  const df = new Map();
+  let totalLen = 0;
+  for (const e of entries) {
+    const words = new Set(e.words || []);
+    for (const w of words) df.set(w, (df.get(w) || 0) + 1);
+    totalLen += (e.words || []).length;
+  }
+  const idf = new Map();
+  for (const [w, freq] of df) {
+    idf.set(w, Math.log((N - freq + 0.5) / (freq + 0.5) + 1));
+  }
+  return { idf, avgdl: entries.length > 0 ? totalLen / entries.length : 1 };
+}
+
+function scoreBM25(promptWords, entryWords, idf, avgdl) {
+  if (!entryWords || entryWords.length === 0) return 0;
+  const dl = entryWords.length;
+  const tf = {};
+  for (const w of entryWords) tf[w] = (tf[w] || 0) + 1;
+  let score = 0;
+  for (const w of promptWords) {
+    const idfW = idf.get(w) || 0;
+    if (!idfW || !tf[w]) continue;
+    score += idfW * (tf[w] * (BM25_K1 + 1)) / (tf[w] + BM25_K1 * (1 - BM25_B + BM25_B * dl / avgdl));
+  }
+  return score;
 }
 
 // ── Inverted index helpers ───────────────────────────────────────────────────
@@ -411,11 +452,13 @@ function init() {
     if (age < 24 * 60 * 60 * 1000) { // 24h freshness
       // Build ranked context using graphify's pre-computed pageRanks
       const graphifyPageRanks = graphState.pageRanks || {};
+      const graphifyNodes = graphState.nodes || {};
       const rankedEntries = store.map(entry => {
         const id = entry.id;
         const content = entry.content || entry.value || '';
         const summary = entry.summary || entry.key || '';
         const words = tokenize(content + ' ' + summary);
+        const nodeInfo = graphifyNodes[id] || {};
         return {
           id,
           content: content.slice(0, 300),
@@ -424,15 +467,31 @@ function init() {
           quality: entry.quality || (entry.metadata && entry.metadata.quality) || 'normal',
           accessCount: (entry.metadata && entry.metadata.accessCount) || 0,
           pageRank: graphifyPageRanks[id] || 0,
+          community: nodeInfo.community !== undefined ? nodeInfo.community : -1,
           words,
         };
       }).sort((a, b) => b.pageRank - a.pageRank);
+
+      // Build community keyword index for fallback routing
+      const communityKeywords = {};
+      for (const e of rankedEntries) {
+        const c = e.community;
+        if (c === -1 || c === undefined) continue;
+        if (!communityKeywords[c]) communityKeywords[c] = new Set();
+        for (const w of e.words) communityKeywords[c].add(w);
+      }
+      // Serialize Sets to arrays
+      const communityIndex = {};
+      for (const [c, ws] of Object.entries(communityKeywords)) {
+        communityIndex[c] = Array.from(ws);
+      }
 
       writeJSON(RANKED_PATH, {
         version: 1,
         computedAt: Date.now(),
         source: 'graphify-bridge',
         entries: rankedEntries,
+        communityIndex,
       });
 
       return {
@@ -555,15 +614,44 @@ function getContext(prompt) {
     }
   }
 
-  // Score each candidate
+  // BM25 scoring — replaces Jaccard trigram matching
+  const { idf, avgdl } = buildIDF(ranked.entries);
   const scored = [];
   for (const entry of candidates) {
-    const entryTrigrams = trigrams(entry.words || []);
-    const contentMatch = jaccardSimilarity(promptTrigrams, entryTrigrams);
-    const score = ALPHA * contentMatch + (1 - ALPHA) * (entry.pageRank || 0);
+    const bm25 = scoreBM25(promptWords, entry.words || [], idf, avgdl);
+    const normalizedBM25 = Math.min(bm25 / 8, 1); // BM25 ~0-8 for good matches → 0-1
+    const score = ALPHA * normalizedBM25 + (1 - ALPHA) * (entry.baseScore || entry.pageRank || 0);
     if (score >= MIN_THRESHOLD) {
       scored.push({ ...entry, score });
     }
+  }
+
+  // Community routing fallback — when trigram matching returns nothing
+  if (scored.length === 0 && ranked.communityIndex) {
+    const promptWordSet = new Set(promptWords);
+    let bestCommunity = -1;
+    let bestOverlap = 0;
+    for (const [c, words] of Object.entries(ranked.communityIndex)) {
+      let overlap = 0;
+      for (const w of words) { if (promptWordSet.has(w)) overlap++; }
+      if (overlap > bestOverlap) { bestOverlap = overlap; bestCommunity = Number(c); }
+    }
+    if (bestCommunity !== -1 && bestOverlap > 0) {
+      const communityEntries = ranked.entries
+        .filter(e => e.community === bestCommunity)
+        .sort((a, b) => b.pageRank - a.pageRank)
+        .slice(0, TOP_K);
+      if (communityEntries.length > 0) {
+        const lines = [`[INTELLIGENCE] Community #${bestCommunity} routing (${bestOverlap} keyword matches):`];
+        for (let i = 0; i < communityEntries.length; i++) {
+          const e = communityEntries[i];
+          const display = (e.summary || e.content || '').slice(0, 80);
+          lines.push(`  * (community) ${display} [rank #${i + 1}]`);
+        }
+        return lines.join('\n');
+      }
+    }
+    return null;
   }
 
   if (scored.length === 0) return null;

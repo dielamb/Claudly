@@ -1,0 +1,10 @@
+{
+  "runIndex": 12,
+  "prompt": "GAN loop rubric threshold config",
+  "cwd": "__HOME__",
+  "expected_pass": "true",
+  "actual_result": "FAIL",
+  "keywords_matched": [],
+  "output_length": 5789,
+  "raw_output": "{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"UserPromptSubmit\",\n    \"additionalContext\": \"<prior-knowledge>\\n\\n\\n## Domain Rules (gan-loop)\\n# gan-loop — Rules (active behavior modifiers)\\n\\n## Install topology\\n- **Canonical:** `~/.claude/tools/gan-loop/` — live data (runs/, briefs/, .logs/)\\n- **Clean repo:** `~/Desktop/claude-setup/claude/tools/gan-loop/` — git source for `dielamb/claudly`, code only\\n- **Never** add third copy. Edit in canonical (or claude-setup dla code-only changes), sync the other.\\n\\n## Stop hook auto-trigger DISABLED\\n- `~/.claude/hooks/gan-loop-classifier.cjs` — file istnieje ale NIE jest w `settings.json`. Nie odpalać post-response auto-loops — zero value (no learning feedback).\\n- Pre-response `gan-classifier.sh` (UserPromptSubmit) zostaje — to source of `GAN_LOOP_REQUIRED` hint który Claude świadomie wykonuje pod CLAUDE.md \\\"Output ships\\\" rule.\\n\\n## Loop-operator patches (mandatory)\\n- **Step 2.5 Final-Cleanup Pass** — applies last feedback regardle"
+}

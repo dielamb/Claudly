@@ -1,7 +1,7 @@
 # claude-setup
 
 This repo is a Claude Code setup installer. It contains global config, hooks,
-skills, agents, GAN loop, and Obsidian vault template.
+skills, agents, and Obsidian vault template.
 
 ## What this is
 
@@ -11,10 +11,10 @@ See `GETTING_STARTED.md` after install.
 ## Repo structure
 
 ```
-claude/      → installs to ~/.claude/
-gan-loop/    → installs to ~/tools/gan-loop/
-obsidian/    → installs to ~/Desktop/Labirynt/
-install.sh   → entry point
+claude/         → installs to ~/.claude/
+obsidian/       → installs to ~/Desktop/Labirynt/
+launch-agents/  → installs to ~/Library/LaunchAgents/
+install.sh      → entry point
 ```
 
 ## Working on this repo

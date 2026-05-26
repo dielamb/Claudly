@@ -22,7 +22,7 @@ echo "[$DATE] Weekly review started" >> "$LOG_DIR/ruflo-weekly.log"
 
 # Step 0: Update graphify graph before review
 echo "[$DATE] Running graphify --update" >> "$LOG_DIR/ruflo-weekly.log"
-cd "$VAULT" && npx @anthropic-ai/claude-code \
+cd "$VAULT" && env -u ANTHROPIC_API_KEY npx @anthropic-ai/claude-code \
   -p "Run /graphify . --update. This is automated, no questions. If no baseline exists, run full rebuild." \
   --dangerously-skip-permissions \
   >> "$LOG_DIR/ruflo-weekly.log" 2>&1
@@ -57,7 +57,7 @@ done
 
 echo "[$DATE] Git summary collected" >> "$LOG_DIR/ruflo-weekly.log"
 
-claude --dangerously-skip-permissions -p "
+env -u ANTHROPIC_API_KEY claude --dangerously-skip-permissions -p "
 You are running a weekly knowledge review. Do these steps IN ORDER:
 
 ## Step 0: Read knowledge graph
@@ -98,20 +98,20 @@ week: $WEEK
 
 # Weekly Review $WEEK
 
-## What happened
+## Co sie dzialo
 - [main activities]
 
-## Patterns
+## Wzorce
 - [recurring themes or problems]
 
 ## Learned this week
 - [Problem files created/updated, what was high-quality]
 
-## Graph of the week
-- Isolated nodes (missing wikilinks): [top 3-5 from Knowledge Gaps]
-- Suggested connections: [1-2 specific links to add in Obsidian]
+## Graf tygodnia
+- Isolated nodes (brakujące wikilinki): [top 3-5 z Knowledge Gaps]
+- Sugerowane połączenia: [1-2 konkretne linki do dodania w Obsidian]
 
-## Next week
+## Na nastepny tydzien
 - [what to focus on based on patterns]
 
 Keep under 350 words. Be specific.

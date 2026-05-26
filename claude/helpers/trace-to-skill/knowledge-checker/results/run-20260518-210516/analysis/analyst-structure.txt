@@ -1,0 +1,19 @@
+# STRUCTURE ANALYST OUTPUT
+# Generated: 2026-05-19T11:05:00.000Z
+# Exit code: 0
+
+RULE: Keyword matching requires exact string match against a fixed tool-name lexicon — only literal tokens "portfolio", "gan-loop", "Labirynt", "trace-to-skill" trigger retrieval, no fuzzy or semantic matching | EVIDENCE: runs 1, 4, 9, 18 PASS; runs 2, 3, 5–8, 10–20 FAIL | PRIORITY: high
+
+RULE: Polish natural-language prompts that name a project or tool via description rather than exact identifier produce 0-char retrieval — the lexicon contains no Polish-language entries and no stemming/transliteration bridge | EVIDENCE: runs 2, 3, 6, 7, 8, 11, 13, 14, 15, 16, 20 all 0 chars | PRIORITY: high
+
+RULE: Hyphenated tool names ("gan-loop", "trace-to-skill") succeed when written exactly, but the same tool referenced with spaces or partial tokens ("session loader", "prompt-enrichment") produces 0-char retrieval — tokenizer does not normalize hyphens to spaces | EVIDENCE: run 4 PASS (gan-loop exact), run 3 FAIL (session loader spaced), run 12 FAIL (prompt-enrichment partial) | PRIORITY: high
+
+RULE: False-positive injection occurs when a query contains a person's first name or conversational social signal — injector fires broader "people/social" context block (dreamer rules) regardless of task type, producing wrong context 3584 chars instead of 0 | EVIDENCE: run 10 ("inga dała znać") wrong context 3584 chars vs 0 for all other non-matching runs | PRIORITY: high
+
+RULE: Successful context injections cluster in narrow size band (1650–2100 chars), suggesting single template-per-keyword retrieval model with no granularity | EVIDENCE: runs 1 (1842), 4 (1650), 9 (2100), 18 (1920) all within 450-char spread | PRIORITY: medium
+
+RULE: Pure coding-task prompts (authMiddleware, SQL, mobile responsiveness, useEffect, package.json) uniformly produce 0-char retrieval — no domain-to-keyword mapping exists for technology terms, no coverage for dominant class of developer queries | EVIDENCE: runs 5, 6, 7, 14, 17 all 0 chars | PRIORITY: high
+
+RULE: Pass rate driven entirely by lexicon membership of prompt's dominant noun — PASS distributed non-consecutively (1, 4, 9, 18) with no clustering, gaps of 3, 4, and 8 fails between passes | EVIDENCE: runs 1, 4, 9, 18 PASS; gap pattern 1→4 (3 fails), 4→9 (4 fails), 9→18 (8 fails) | PRIORITY: medium
+
+RULE: Zero-char retrieval is the default failure mode (15 of 16 FAILs) — system has no fallback retrieval strategy; absence of exact lexicon hit produces silence rather than degraded-quality context | EVIDENCE: runs 2, 3, 5, 6, 7, 8, 11, 12, 13, 14, 15, 16, 17, 19, 20 all 0 chars | PRIORITY: medium

@@ -15,7 +15,7 @@
 
 const fs   = require('fs');
 const path = require('path');
-const { spawnSync, spawn } = require('child_process');
+const { spawn } = require('child_process');
 
 const HOME         = process.env.HOME || '__HOME__';
 const LEARNING_DIR = path.join(HOME, '.claude', 'learning');
@@ -26,7 +26,12 @@ const LAST_DREAM   = path.join(LEARNING_DIR, 'last-dream.txt');
 const GLOBAL_MD    = path.join(LEARNING_DIR, 'global.md');
 const SKILLS_DIR   = path.join(HOME, '.claude', 'skills');
 
-const LOG = (...a) => console.error('[dream-worker]', ...a);
+const LOG_FILE = path.join(process.env.HOME || '__HOME__', '.claude', 'learning', 'dream-worker.log');
+const LOG = (...a) => {
+  const line = '[dream-worker] ' + a.join(' ') + '\n';
+  process.stderr.write(line);
+  try { fs.appendFileSync(LOG_FILE, line); } catch (_) {}
+};
 
 // TODO: extract to ./vault-utils.js once other callers need it
 // (export-rules-to-obsidian.js, backfill-wikilinks.js per GAN draft 20260425-063225)
@@ -47,19 +52,25 @@ function loadVaultNoteTitles() {
 }
 
 // Returns comma-separated wikilinks string (e.g. "[[Note A]],[[Note B]]"), or "".
-// Uses the same claude CLI pattern already established in this file.
-function generateWikilinks(ruleText) {
+async function generateWikilinks(ruleText) {
   const titles = loadVaultNoteTitles();
   if (titles.length === 0) return '';
   const noteList = titles.map(t => `"${t}"`).join(', ');
   const prompt = `Rule: "${ruleText}". Available Obsidian notes: [${noteList}]. Return JSON array of 1-3 relevant note titles as wikilinks: ["[[Title1]]", "[[Title2]]"]. Return [] if nothing is relevant. Respond with raw JSON only.`;
   const claudeBin = `${HOME}/.nvm/versions/node/v24.15.0/bin/claude`;
-  const res = spawnSync(
-    claudeBin,
-    ['-p', prompt, '--model', 'claude-haiku-4-5-20251001', '--output-format', 'text'],
-    { encoding: 'utf8', timeout: 15000 }
-  );
-  if (res.status !== 0 || !res.stdout?.trim()) return '';
+  const cliEnv = { ...process.env }; delete cliEnv.ANTHROPIC_API_KEY;
+  const res = await new Promise((resolve) => {
+    const child = spawn(claudeBin,
+      ['-p', prompt, '--model', 'claude-haiku-4-5-20251001', '--output-format', 'text'],
+      { env: cliEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+    let stdout = '', stderr = '';
+    child.stdout.on('data', d => { stdout += d; });
+    child.stderr.on('data', d => { stderr += d; });
+    const timer = setTimeout(() => { child.kill('SIGTERM'); resolve({ stdout: '' }); }, 20000);
+    child.on('error', () => { clearTimeout(timer); resolve({ stdout: '' }); });
+    child.on('close', () => { clearTimeout(timer); resolve({ stdout }); });
+  });
+  if (!res.stdout?.trim()) return '';
   try {
     const arr = JSON.parse((res.stdout.match(/\[[\s\S]*\]/) || ['[]'])[0]);
     return Array.isArray(arr) ? arr.join(',') : '';
@@ -142,10 +153,15 @@ async function main() {
   const processed = loadProcessed();
   let sessionFiles;
   try {
+    // Sort by mtime, not UUID alphabetical — UUIDs are random so sort() never picks recent files.
+    // Window size honors DREAM_WINDOW env (default 20) for catch-up runs over backlog.
+    const windowSize = parseInt(process.env.DREAM_WINDOW || '20', 10);
     sessionFiles = fs.readdirSync(SESSIONS_DIR)
       .filter(f => f.endsWith('.jsonl'))
-      .sort().slice(-20)
-      .map(f => path.join(SESSIONS_DIR, f));
+      .map(f => ({ f, m: fs.statSync(path.join(SESSIONS_DIR, f)).mtimeMs }))
+      .sort((a, b) => a.m - b.m)
+      .slice(-windowSize)
+      .map(o => path.join(SESSIONS_DIR, o.f));
   } catch (_) { LOG('No sessions dir'); return; }
 
   const unprocessed = sessionFiles.filter(f => !processed[path.basename(f)]);
@@ -211,20 +227,31 @@ If no rules needed, output: []`;
   const claudeBin = process.env.HOME
     ? `${process.env.HOME}/.nvm/versions/node/v24.15.0/bin/claude`
     : 'claude';
-  const result = spawnSync(
-    claudeBin,
-    ['-p', dreamPrompt, '--model', 'claude-haiku-4-5-20251001', '--output-format', 'text'],
-    { encoding: 'utf8', timeout: 60000 }
-  );
+  // Strip ANTHROPIC_API_KEY so claude CLI falls back to OAuth from Claude Pro/Max desktop login.
+  // The shell env may carry an invalid/expired key that the API rejects (auth_error).
+  const cliEnv = { ...process.env }; delete cliEnv.ANTHROPIC_API_KEY;
 
-  if (result.status !== 0 || !result.stdout?.trim()) {
-    LOG('Haiku call failed:', result.stderr?.slice(0, 200));
+  // Use async spawn to avoid event-loop blocking and pipe-buffer deadlocks.
+  const rawOutput = await new Promise((resolve) => {
+    const child = spawn(claudeBin,
+      ['-p', dreamPrompt, '--model', 'claude-haiku-4-5-20251001', '--output-format', 'text'],
+      { env: cliEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+    let stdout = '', stderr = '';
+    child.stdout.on('data', d => { stdout += d; });
+    child.stderr.on('data', d => { stderr += d; });
+    const timer = setTimeout(() => { child.kill('SIGTERM'); resolve({ stdout: '', stderr: 'timeout', code: null }); }, 90000);
+    child.on('error', err => { clearTimeout(timer); resolve({ stdout: '', stderr: err.message, code: null }); });
+    child.on('close', code => { clearTimeout(timer); resolve({ stdout, stderr, code }); });
+  });
+
+  if (!rawOutput.stdout?.trim()) {
+    LOG(`Haiku call failed: code=${rawOutput.code} stderr=${rawOutput.stderr?.slice(0, 300) || ''} stdout_len=${rawOutput.stdout?.length}`);
     return;
   }
 
   let rules = [];
   try {
-    const match = result.stdout.match(/\[[\s\S]*\]/);
+    const match = rawOutput.stdout.match(/\[[\s\S]*\]/);
     if (match) rules = JSON.parse(match[0]);
   } catch (_) {
     LOG('Could not parse Haiku output as JSON'); return;
@@ -260,7 +287,7 @@ If no rules needed, output: []`;
     }
 
     const date = new Date().toISOString().split('T')[0];
-    const wikilinks = generateWikilinks(item.rule);
+    const wikilinks = await generateWikilinks(item.rule);
     const wikilinksMeta = wikilinks ? ` wikilinks:${wikilinks}` : '';
     fs.appendFileSync(targetFile, `${item.rule}\n<!-- dream ${date}${wikilinksMeta} -->\n\n`);
     LOG(`+ Written to ${item.file}: "${item.rule.slice(0, 60)}"`);

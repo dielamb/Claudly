@@ -1,0 +1,72 @@
+=== graphify labirynt monthly run: pt. 10 kwi 2026 21:51:25 CEST ===
+Stopping before any extraction — two things need your decision:
+
+**1. No baseline graph exists.** `graphify-out/` contains only Obsidian community markdown from a prior run — no `graph.json` or manifest. `--update` can't run incrementally without a baseline, so this would become a full rebuild.
+
+**2. 278 files crosses the corpus warning threshold (>200).** Top subdirs:
+
+```
+180  graphify-out/      ← previous output, should be EXCLUDED
+ 34  4 People/
+ 25  3 Atlas/
+  8  5 Sources/
+  7  Templates/
+  7  2 Efforts/
+  7  1 Calendar/
+  5  Archive/
+  5  6 Maps/
+```
+
+The 180 files in `graphify-out/` are last run's artifacts — indexing them would create a self-referential loop. Real vault content is only ~98 files / ~65k words, well within limits.
+
+**How do you want to proceed?**
+
+- **A)** Full rebuild of the whole vault, excluding `graphify-out/` (I'll delete/move it first) — ~98 docs, moderate LLM cost
+- **B)** Rebuild on a specific subfolder only (e.g. `3 Atlas/` or `2 Efforts/`)
+- **C)** Wipe `graphify-out/` entirely and do a fresh full build with `--obsidian` to regenerate the vault notes too
+
+Which one?
+SessionEnd hook [sh -c 'exec node "${CLAUDE_PROJECT_DIR:-.}/.claude/helpers/hook-handler.cjs" session-end'] failed: node:internal/modules/cjs/loader:1386
+  throw err;
+  ^
+
+Error: Cannot find module '/Users/michalmaciejewski/Desktop/Labirynt/.claude/helpers/hook-handler.cjs'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Module._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.22.2
+
+=== exit code: 0 ===
+
+=== graphify labirynt monthly run: pt. 10 kwi 2026 21:54:12 CEST ===
+Graphify update complete: 1 changed file (Kejti profile) → graph grew 158→185 nodes, 206→238 edges, 23 communities.
+SessionEnd hook [sh -c 'exec node "${CLAUDE_PROJECT_DIR:-.}/.claude/helpers/hook-handler.cjs" session-end'] failed: node:internal/modules/cjs/loader:1386
+  throw err;
+  ^
+
+Error: Cannot find module '/Users/michalmaciejewski/Desktop/Labirynt/.claude/helpers/hook-handler.cjs'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Module._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v22.22.2
+
+=== exit code: 0 ===
+

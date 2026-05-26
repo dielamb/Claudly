@@ -1,87 +1,87 @@
 ---
 name: inbox-review
-description: Review low-confidence notes in ~/Desktop/Labirynt/0 Inbox/ and sort them into proper 3 Atlas/ subfolders. Use when notes pile up in Inbox (auto-classified as ambiguous by auto-tldr) or when user says "/inbox-review", "review inbox", "sort inbox".
+description: Review low-confidence notes in ~/Desktop/Labirynt/0 Inbox/ and sort them into proper 3 Atlas/ subfolders. Use when notes pile up in Inbox (auto-classified as ambiguous by auto-tldr) or when user says "/inbox-review", "przejrzyj inbox", "posortuj inbox".
 ---
 
-# Inbox Review — sorting low-confidence notes
+# Inbox Review — sortowanie low-confidence notatek
 
-Notes in `~/Desktop/Labirynt/0 Inbox/` are those that auto-tldr could not unambiguously classify (confidence <70%). This skill reviews them one by one, proposes a target folder and — after your `OK` — moves them.
+Notatki w `~/Desktop/Labirynt/0 Inbox/` to te, które auto-tldr nie potrafił jednoznacznie zaklasyfikować (confidence <70%). Ten skill przegląda je po kolei, proponuje folder docelowy i — po Twoim `OK` — przenosi.
 
-## When to use
+## Kiedy używać
 
-- Manually after a heavy session when Inbox has >3 files
-- As part of `/weekly-review` — part of Sunday cleanup
-- When someone dropped a quick-capture note that would sit there for months
+- Ręcznie po ciężkiej sesji gdy Inbox ma >3 pliki
+- W ramach `/weekly-review` — part of Sunday cleanup
+- Gdy ktoś wrzucił quick-capture note i ma siedzieć tam miesiącami
 
-## Procedure
+## Procedura
 
-### Step 1: Count Inbox
+### Krok 1: Policz Inbox
 
 ```bash
 ls -la ~/Desktop/Labirynt/0\ Inbox/ 2>/dev/null | grep -v "^d" | grep -v "^total" | grep -v "^\." | wc -l
 ```
 
-If 0 files — say "Inbox empty, nothing to review" and exit.
+Jeśli 0 plików — powiedz "Inbox pusty, nic do review" i zakończ.
 
-### Step 2: For each file
+### Krok 2: Dla każdego pliku
 
-For each `.md` file in Inbox:
+Dla każdego `.md` pliku w Inbox:
 
-1. **Read** content + frontmatter
-2. **Check `proposed_folders:`** in frontmatter — these are suggestions from auto-tldr
-3. **Classify** according to the routing matrix from `~/Desktop/Labirynt/CLAUDE.md`:
+1. **Przeczytaj** content + frontmatter
+2. **Sprawdź `proposed_folders:`** w frontmatter — to sugestie od auto-tldr
+3. **Sklasyfikuj** według routing matrix z `~/Desktop/Labirynt/CLAUDE.md`:
 
-   | Content type | Target folder | type: |
+   | Typ content | Target folder | type: |
    |---|---|---|
    | Reusable snippet/pattern | `3 Atlas/Code/` | `pattern` |
    | Design principle/token | `3 Atlas/Design/` | `design-principle` |
-   | Bug + fix + context | `3 Atlas/Problems/` | `problem-solution` |
+   | Bug + fix + kontekst | `3 Atlas/Problems/` | `problem-solution` |
    | Tool/MCP/plugin note | `3 Atlas/Tools/` | `tool-note` |
    | Future idea | `3 Atlas/Ideas/` | `idea` |
-   | Person (2+ mentions) | `4 People/` | `person` |
+   | Person (2+ wzmianki) | `4 People/` | `person` |
    | Source material | `5 Sources/` | `source` |
    | Effort/project | `2 Efforts/` | `effort` |
    | Decision | append to `3 Atlas/Career/Decisions.md` | — |
 
-4. **Propose to the user** (once, in one message):
+4. **Zaproponuj użytkownikowi** (jednorazowo, w jednej wiadomości):
 
    ```
-   ## Inbox review — N files
+   ## Inbox review — N plików
 
    ### 1. [filename].md
-   **Content summary:** [1 sentence]
+   **Content summary:** [1 zdanie]
    **Proposed folder:** `3 Atlas/[X]/`
-   **New type:** [pattern/tool-note/etc]
+   **Nowy type:** [pattern/tool-note/etc]
    **Proposed title:** [Refactored title]
 
    ### 2. [next file]...
    ```
 
-5. **Wait for `OK` or modifications** from user.
+5. **Czekaj na `OK` lub modyfikacje** od usera.
 
-### Step 3: After approval — execute migrations
+### Krok 3: Po zatwierdzeniu — wykonaj migracje
 
-For each approved file:
+Dla każdego zatwierdzonego pliku:
 
-1. **Check target doesn't already have such a file** (dedup):
+1. **Sprawdź czy target nie ma już takiego pliku** (dedup):
    ```bash
    ls ~/Desktop/Labirynt/[folder]/[new_name].md 2>/dev/null
    ```
-   If it exists: **DON'T overwrite**. Propose appending content to the existing note or a different title.
+   Jeśli istnieje: **NIE nadpisuj**. Zaproponuj append content do istniejącej notatki albo inny tytuł.
 
 2. **Move + reformat:**
-   - Move file to target folder
-   - Update frontmatter (change `type: unsorted` to appropriate type, remove `proposed_folders`, `confidence`)
-   - If content doesn't match the target folder's template — reformat sections
+   - Przenieś plik do target folder
+   - Zaktualizuj frontmatter (zmień `type: unsorted` na właściwy, usuń `proposed_folders`, `confidence`)
+   - Jeśli content nie pasuje do template target folderu — przeformatuj sekcje
 
 3. **Update wikilinks:**
-   - Find all files in vault that link to the old location
-   - Wikilink `[[Inbox filename]]` → `[[filename]]` (Obsidian resolves automatically after move)
-   - If file had frontmatter `proposed_folders: [X, Y]` — add to `## Related` a wikilink to the alternative folder in case a split would be worthwhile
+   - Znajdź wszystkie pliki w vault które linkują do starej lokalizacji
+   - Wikilink `[[Inbox filename]]` → `[[filename]]` (Obsidian resolves automatically po move)
+   - Jeśli plik miał frontmatter `proposed_folders: [X, Y]` — dodaj do `## Powiązane` wikilink do alternatywnego folderu gdyby warto było zrobić split
 
-### Step 3.5: Append to vault-log.md
+### Krok 3.5: Append to vault-log.md
 
-After each batch migration add an entry to `~/Desktop/Labirynt/vault-log.md`:
+Po każdym batch migracji dodaj entry do `~/Desktop/Labirynt/vault-log.md`:
 
 ```markdown
 ### YYYY-MM-DD HH:MM inbox-review
@@ -91,9 +91,9 @@ After each batch migration add an entry to `~/Desktop/Labirynt/vault-log.md`:
   - Skipped: [count] duplicates
 ```
 
-### Step 4: Summary
+### Krok 4: Podsumowanie
 
-At the end:
+Na końcu:
 
 ```
 ## Inbox review complete
@@ -112,16 +112,16 @@ Inbox: 0 files remaining (clean)
 
 ## Anti-patterns
 
-- **DON'T ask the user about each file separately** — one message with the full plan, user approves in bulk
-- **DON'T overwrite existing notes** — always check dedup
-- **DON'T guess** if a file is ambiguous even after reading — leave in Inbox with comment "needs human review"
-- **DON'T delete** files with frontmatter `status: active` or without frontmatter — only ephemeral trash (`proposed_folders: []` + content <100 chars)
+- **NIE pytaj usera o każdy plik osobno** — jedna wiadomość z całym planem, user zatwierdza zbiorczo
+- **NIE nadpisuj istniejących notatek** — zawsze check dedup
+- **NIE zgaduj** jeśli plik jest ambiguous nawet po przeczytaniu — zostaw w Inbox z komentarzem "needs human review"
+- **NIE usuwaj** plików z frontmatter `status: active` lub bez frontmatter — tylko ephemeral trash (`proposed_folders: []` + content <100 chars)
 
-## Integration with weekly-review
+## Integracja z weekly-review
 
-This skill can be invoked automatically by `/weekly-review` if Inbox has >5 files. Add to weekly-review SKILL.md step: "Check Inbox count; if >5, invoke /inbox-review".
+Ten skill może być wywołany automatycznie przez `/weekly-review` jeśli Inbox ma >5 plików. Dodaj do weekly-review SKILL.md krok: "Check Inbox count; if >5, invoke /inbox-review".
 
-## Related
-- `~/Desktop/Labirynt/CLAUDE.md` — routing matrix (source of truth)
+## Powiązane
+- `~/Desktop/Labirynt/CLAUDE.md` — routing matrix (źródło prawdy)
 - `~/.claude/helpers-user/auto-tldr-safe.sh` — producer of Inbox entries
 - `~/.claude/skills/weekly-review/SKILL.md` — orchestrator integration

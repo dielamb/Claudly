@@ -11,7 +11,7 @@ mkdir -p "$LOG_DIR"
 
 echo "[$DATE] Monthly consolidation started" >> "$LOG_DIR/ruflo-monthly.log"
 
-claude --dangerously-skip-permissions -p "
+env -u ANTHROPIC_API_KEY claude --dangerously-skip-permissions -p "
 Run /consolidate skill. Read weekly reviews from last 4 weeks in ~/Desktop/Labirynt/1 Calendar/ (files matching YYYY-Www.md). Read all ~/Desktop/Labirynt/3 Atlas/Problems/. Find duplicates to merge, recurring patterns to synthesize into MOC in ~/Desktop/Labirynt/6 Maps/. Follow the consolidate skill instructions exactly.
 " --allowedTools "Read,Write,Glob,Grep" >> "$LOG_DIR/ruflo-monthly.log" 2>&1
 

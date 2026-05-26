@@ -93,7 +93,7 @@ function run() {
     `> Auto-exported from \`~/.claude/learning/rules.json\` (${rules.filter(r => !r.disabled).length} active rules).`,
     '> Do not edit manually — regenerated before each graphify run.',
     '',
-    '## Related',
+    '## Powiązane',
     '',
     '[[GAN Loop - Generator-Evaluator pipeline]] [[Janitor Crew System]] [[RuFlo Setup]] [[GSD visual verification]] [[Dream Worker Meta-Session Bug]]',
     '',

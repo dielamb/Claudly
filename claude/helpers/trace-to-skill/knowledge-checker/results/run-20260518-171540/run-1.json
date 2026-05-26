@@ -1,0 +1,12 @@
+{
+  "runIndex": 1,
+  "prompt": "portfolio hero section redesign",
+  "cwd": "__HOME__",
+  "expected_pass": "true",
+  "actual_result": "PASS",
+  "keywords_matched": [
+    "portfolio"
+  ],
+  "output_length": 13508,
+  "raw_output": "{\n  \"hookSpecificOutput\": {\n    \"hookEventName\": \"UserPromptSubmit\",\n    \"additionalContext\": \"<prior-knowledge>\\n[INTELLIGENCE] Relevant patterns for this task:\\n  * (0.18) Portfolio CS01 Section Specifics [rank #1, 0x accessed]\\n  * (0.18) Portfolio www_v2 [rank #2, 0x accessed]\\n  * (0.18) Portfolio www_v2 [rank #3, 0x accessed]\\n  * (0.15) Portfolio RULE-002: .section.active CSS Pattern for Pinned Sections [rank #4, 0x accessed]\\n\\n## Domain Rules (portfolio)\\n# portfolio — Rules\\n\\nRules confirmed 3+ times. Apply by default.\\n\\n---\\n\\n**RULE-001: Every change on a branch, never direct to main**\\n`git checkout -b feat/|fix/|exp/|refactor/` before touching any file.\\nRevert = `git checkout main`. No `git checkout -- .` archaeology.\\nPrefixes: feat/ fix/ exp/ refactor/\\nSource: user correction 2026-04-24 (multiple sessions of direct edits caused painful reverts).\\n\\n**RULE-002: Use `.section.active .element` CSS pattern for pinned sections, not `data-reveal`**\\nscroll-reveal.js IO fi"
+}

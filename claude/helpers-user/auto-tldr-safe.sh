@@ -12,6 +12,27 @@
 
 export PATH="__HOME__/.nvm/versions/node/v24.15.0/bin:$PATH"
 
+# DISARM 2026-05-11: recursion guard + global kill switch.
+# Headless `claude -p` below also fires Stop hook → re-enters this script → cascade.
+# Cause: settings.json Stop hooks fire for ALL claude invocations, including headless.
+# Fix: env var propagates to child, child's auto-tldr-safe early-exits.
+if [ "$AUTO_TLDR_HEADLESS" = "1" ]; then
+  echo "[$(date +%Y-%m-%d)] auto-tldr-safe: AUTO_TLDR_HEADLESS=1, skipping recursion" >> "$HOME/logs/auto-tldr.log"
+  exit 0
+fi
+# Hard kill switch — comment out next line to re-enable auto-tldr after recursion fix is verified end-to-end.
+if [ -f "$HOME/.claude/AUTO_TLDR_DISABLED" ]; then
+  echo "[$(date +%Y-%m-%d)] auto-tldr-safe: DISABLED via ~/.claude/AUTO_TLDR_DISABLED" >> "$HOME/logs/auto-tldr.log"
+  exit 0
+fi
+
+# Skip heavy SessionStart hooks in headless claude spawn below.
+# Without this, each headless claude re-vectorizes 1982 entries via ONNX (384-dim),
+# loads graphify (1361 nodes), reasoningbank, etc — RSS balloons to GB-scale per child.
+# Stacked over many session-ends → 80GB+ Ghostty memory.
+export CLAUDE_FLOW_HOOKS_ENABLED=false
+export CLAUDE_FLOW_DISABLE_HOOKS=1
+
 DATE=$(date +%Y-%m-%d)
 VAULT="$HOME/Desktop/Labirynt"
 DAILY_NOTE="$VAULT/1 Calendar/$DATE.md"
@@ -70,7 +91,7 @@ fi
 TIMEOUT_PID=$!
 trap "rm -f $TMPFILE; kill $TIMEOUT_PID 2>/dev/null" EXIT
 
-claude --dangerously-skip-permissions -p "
+env -u ANTHROPIC_API_KEY AUTO_TLDR_HEADLESS=1 claude --dangerously-skip-permissions -p "
 You are running an automated session knowledge extraction. Read the session transcript at $TMPFILE (pre-filtered: user messages + summaries + recent tool output, NOT the full raw transcript).
 
 Read ~/Desktop/Labirynt/CLAUDE.md first — it defines the routing matrix you MUST follow.
@@ -117,7 +138,7 @@ Classification logic (follow in order):
    → Do NOT use for: trivial lookups, debug walkthroughs, single-source answers (those belong in original note)
    → Follow Karpathy LLM Wiki pattern: good answers become compounding synthesis pages
 
-6. **Is it a decision** (user said: zdecydowałem/I decided, idziemy z/we're going with, zostaje/it stays)?
+6. **Is it a decision** (user said: zdecydowałem, idziemy z, zostaje)?
    → append to \`3 Atlas/Career/Decisions.md\`
 
 7. **Is it a personal fact** (weight, rate, preference)?
@@ -155,9 +176,9 @@ quality: [high/normal/low]
 breakthrough_commit: \"[hash or empty]\"
 ---
 ## Problem
-## Context
-## Solution
-## Why it worked
+## Kontekst
+## Rozwiązanie
+## Dlaczego zadziałało
 \`\`\`
 
 **pattern (Code/):**
@@ -168,10 +189,10 @@ created: $DATE
 tags: []
 language: [css/js/ts/etc]
 ---
-## Pattern
-## Code
-## When to use
-## Related
+## Wzorzec
+## Kod
+## Kiedy używać
+## Powiązane
 [[wikilinks to related Problems/ or Design/]]
 \`\`\`
 
@@ -183,10 +204,10 @@ created: $DATE
 tags: []
 scope: [typography/spacing/color/layout/motion]
 ---
-## Principle
-## Why
-## Usage examples
-## Related
+## Zasada
+## Dlaczego
+## Przykłady zastosowania
+## Powiązane
 [[wikilinks]]
 \`\`\`
 
@@ -197,10 +218,10 @@ type: tool-note
 created: $DATE
 tags: []
 ---
-## Tool
+## Narzędzie
 ## Use case
 ## Setup
-## Notes
+## Notatki
 \`\`\`
 
 **idea (Ideas/):**
@@ -211,9 +232,9 @@ created: $DATE
 tags: []
 status: [draft/considering/rejected]
 ---
-## Idea
-## Why it makes sense
-## Validation steps
+## Pomysł
+## Dlaczego ma sens
+## Kroki do walidacji
 \`\`\`
 
 **synthesis (Synthesis/):**
@@ -226,17 +247,17 @@ sources: [[Note A]], [[Note B]], [[Note C]]
 tags: []
 quality: [high/normal]
 ---
-## Question
+## Pytanie
 [Rephrased question]
 
-## Synthesis
-[3–6 paragraphs — distillation, NOT copy-paste from sources]
+## Synteza
+[3–6 akapitów — destylacja, NIE copy-paste z sources]
 
-## Key insights
+## Kluczowe insighty
 - [non-obvious takeaway]
 
-## Sources
-- [[Note A]] — [what was taken from it]
+## Źródła
+- [[Note A]] — [co stamtąd wzięto]
 \`\`\`
 
 **unsorted (0 Inbox/):**
@@ -273,11 +294,11 @@ Keep this lightweight — scan max 3 related notes, don't deep-dive.
 
 ## Step 5: Write daily note
 
-Append to $DAILY_NOTE under '## Claude Sessions':
+Append to $DAILY_NOTE under '## Sesje z Claude':
 ### Session auto ($DATE)
-**Project:** [main project]
-**Done:** [2-4 bullets]
-**Saved:** [filenames grouped by folder, e.g. 'Problems/ X.md + Code/ Y.md']
+**Projekt:** [main project]
+**Zrobiono:** [2-4 bullets]
+**Zapisano:** [filenames grouped by folder, e.g. 'Problems/ X.md + Code/ Y.md']
 **Inbox:** [count of unsorted, if any]
 
 Max 100 words. Details live in individual notes.

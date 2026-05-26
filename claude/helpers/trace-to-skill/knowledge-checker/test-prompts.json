@@ -1,0 +1,207 @@
+[
+  {
+    "prompt": "portfolio coś się posypało po mergu",
+    "difficulty": "easy",
+    "expected_keywords": [
+      "portfolio"
+    ],
+    "expected_pass": true,
+    "expected_description": "Domain Rules (portfolio) — git/CSS/animation rules",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "gan loop schrzanił rubric co robić",
+    "difficulty": "easy",
+    "expected_keywords": [
+      "gan-loop"
+    ],
+    "expected_pass": true,
+    "expected_description": "GAN loop rubric patterns or run history",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "szukam roboty DS kiedy update CV",
+    "difficulty": "easy",
+    "expected_keywords": [
+      "career-ops"
+    ],
+    "expected_pass": true,
+    "expected_description": "Career-ops domain rules or job search context",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "css animacja laguje na safari mobilce",
+    "difficulty": "easy",
+    "expected_keywords": [
+      "css-animations"
+    ],
+    "expected_pass": true,
+    "expected_description": "CSS animations domain rules",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "token studio nie syncuje się z figmą",
+    "difficulty": "easy",
+    "expected_keywords": [
+      "design-systems"
+    ],
+    "expected_pass": true,
+    "expected_description": "Design systems / token architecture rules",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "Michał się odezwał jutro co odpisać",
+    "difficulty": "normal",
+    "expected_keywords": [
+      "Przygórski",
+      "Avocado",
+      "Michał"
+    ],
+    "expected_pass": true,
+    "expected_description": "Avocado project context: Michał Przygórski, deal status, reply suggestions",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "co z avocado jest jakiś ruch",
+    "difficulty": "normal",
+    "expected_keywords": [
+      "Avocado"
+    ],
+    "expected_pass": true,
+    "expected_description": "Avocado project: Compass&Partners, current status, soft deadline 23.05",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "ruflo nie ładuje kontekstu przy starcie",
+    "difficulty": "normal",
+    "expected_keywords": [
+      "ruflo"
+    ],
+    "expected_pass": true,
+    "expected_description": "RuFlo session loader architecture or troubleshooting notes",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "GAN nie przeszedł wczoraj wieczorem",
+    "difficulty": "normal",
+    "expected_keywords": [
+      "GAN"
+    ],
+    "expected_pass": true,
+    "expected_description": "GAN loop run history, threshold config, or failure patterns",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "inga dała znać coś nowego",
+    "difficulty": "normal",
+    "expected_keywords": [
+      "Inga",
+      "avocado",
+      "Avocado"
+    ],
+    "expected_pass": true,
+    "expected_description": "Inga Chodacz / Team Connect / Avocado project context",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "lazy divines jak idzie",
+    "difficulty": "normal",
+    "expected_keywords": [
+      "Lazy Divines",
+      "lazy"
+    ],
+    "expected_pass": true,
+    "expected_description": "Lazy Divines project status from Obsidian",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "ile zostało do deadline portfolio",
+    "difficulty": "normal",
+    "expected_keywords": [
+      "portfolio"
+    ],
+    "expected_pass": true,
+    "expected_description": "Portfolio website effort / timeline context",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "przygórski nie odpisuje od tygodnia",
+    "difficulty": "normal",
+    "expected_keywords": [
+      "Przygórski",
+      "Avocado"
+    ],
+    "expected_pass": true,
+    "expected_description": "Avocado stalled deal context, closing SMS pattern",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "Hej skontaktuje się z Tobą jutro wa projektu avocado",
+    "difficulty": "hard",
+    "expected_keywords": [
+      "Avocado",
+      "Przygórski"
+    ],
+    "expected_pass": true,
+    "expected_description": "Avocado project context — classic Jaccard miss case from session history",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "co odpisać na tego smsa",
+    "difficulty": "hard",
+    "expected_keywords": [
+      "Avocado",
+      "Przygórski"
+    ],
+    "expected_pass": true,
+    "expected_description": "Should surface recent Avocado/Przygórski context — no explicit names",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "NDA przed warsztatem, prawda?",
+    "difficulty": "hard",
+    "expected_keywords": [
+      "Avocado",
+      "NDA"
+    ],
+    "expected_pass": true,
+    "expected_description": "Avocado contract detail: NDA before first workshop — no project name mentioned",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "stawka 160 to za mało jak myślisz",
+    "difficulty": "hard",
+    "expected_keywords": [
+      "160",
+      "Avocado",
+      "stawka"
+    ],
+    "expected_pass": true,
+    "expected_description": "Avocado rate context: 160 zł/h B2B — should surface from Decisions or Avocado note",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "portfolio of stocks to buy now",
+    "difficulty": "adversarial",
+    "expected_keywords": [],
+    "expected_pass": false,
+    "expected_description": "FAIL or wrong domain — 'portfolio' triggers web-portfolio rules but question is financial",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "zrób mi kanapkę z serem i pomidorem",
+    "difficulty": "adversarial",
+    "expected_keywords": [],
+    "expected_pass": false,
+    "expected_description": "EMPTY — completely unrelated topic, no context should be injected",
+    "cwd": "__HOME__"
+  },
+  {
+    "prompt": "gan to skrót od generative adversarial network",
+    "difficulty": "adversarial",
+    "expected_keywords": [],
+    "expected_pass": false,
+    "expected_description": "FAIL — looks like gan-loop but is academic definition, wrong context injected",
+    "cwd": "__HOME__"
+  }
+]

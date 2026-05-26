@@ -33,7 +33,7 @@ if [[ -n "$OLDEST_RULE_DATE" ]]; then
   if [[ "$DAYS_OLD" -ge 90 ]]; then
     TRIGGER_FILE="$INBOX/trigger-eval-harness-$(date +%Y-%m).md"
     if [[ ! -f "$TRIGGER_FILE" ]]; then
-      printf "---\ntype: inbox\ncreated: $(date +%Y-%m-%d)\ntags: [trigger, eval-harness]\n---\n\n# TRIGGER: Eval Harness\n\nRules are %d days old. Time to build an eval harness.\n\nSee: [[Eval Harness dla agentow Claude]]\n" "$DAYS_OLD" > "$TRIGGER_FILE"
+      printf "---\ntype: inbox\ncreated: $(date +%Y-%m-%d)\ntags: [trigger, eval-harness]\n---\n\n# TRIGGER: Eval Harness\n\nReguły mają %d dni. Czas zbudować eval harness.\n\nSee: [[Eval Harness dla agentow Claude]]\n" "$DAYS_OLD" > "$TRIGGER_FILE"
       echo "[$(ts)] Trigger written: eval harness (${DAYS_OLD}d old rules)" | tee -a "$LOG"
     fi
   fi

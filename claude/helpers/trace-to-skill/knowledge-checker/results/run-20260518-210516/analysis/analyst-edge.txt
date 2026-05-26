@@ -1,0 +1,23 @@
+# EDGE ANALYST OUTPUT
+# Generated: 2026-05-19T11:05:00.000Z
+# Exit code: 0
+
+RULE: Never match single proper nouns against domain keyword lists without requiring at least one corroborating keyword from the same domain | EVIDENCE: Run 10 | PRIORITY: high
+
+RULE: Jaccard similarity computed over raw Polish tokens must normalize diacritics and strip inflectional suffixes (e.g. "Avocado projektu" → "avocado projekt") before scoring, otherwise inflected project names score below threshold | EVIDENCE: Runs 2, 11 | PRIORITY: high
+
+RULE: Keyword lists must index compound and hyphenated tool names as both the full form and each constituent token; match must require the compound or at least two co-occurring constituents, never a single sub-token alone | EVIDENCE: Runs 3, 12 | PRIORITY: high
+
+RULE: A person's name appearing as the grammatical subject of a Polish sentence with a communication verb (dała znać, napisał, powiedział, zadzwonił) is a person-query signal, not a domain keyword match candidate | EVIDENCE: Run 10 | PRIORITY: high
+
+RULE: Generic Polish coding verbs (napisz, zoptymalizuj, popraw, zaktualizuj, napraw, dodaj, usuń) paired with a technical noun are sufficient to inject coding-domain context even when no explicit domain keyword is present | EVIDENCE: Runs 5, 6, 7, 8, 14, 16, 17 | PRIORITY: medium
+
+RULE: Project names that exist only in Obsidian vault metadata and not in the static keyword list must be loaded into the matcher at hook startup from the vault index, otherwise any prompt containing that project name scores zero | EVIDENCE: Runs 2, 11 | PRIORITY: high
+
+RULE: A positive Jaccard match on a domain must be invalidated when the matched token is a known proper noun (person name, place name) unless a second independent keyword from that domain also appears in the prompt | EVIDENCE: Run 10 | PRIORITY: high
+
+RULE: Calendar-intent signals in Polish (spotkanie, piątek, jutro, tydzień, termin, inwestorzy, deadline) must form their own intent class and route to calendar/people context rather than zero-context or generic domain match | EVIDENCE: Runs 15, 10 | PRIORITY: medium
+
+RULE: Hyphen and camelCase boundaries must be treated as token separators during indexing so "prompt-enrichment" indexes as ["prompt", "enrichment", "prompt-enrichment"] and a prompt containing only "prompt-enrichment" still reaches threshold | EVIDENCE: Run 12 | PRIORITY: medium
+
+RULE: A false-positive injection of 3000+ characters from a wrong domain is strictly worse than zero injection; when match confidence is below a secondary validation threshold the hook must emit zero context rather than the highest-scoring unconfirmed match | EVIDENCE: Run 10 | PRIORITY: high

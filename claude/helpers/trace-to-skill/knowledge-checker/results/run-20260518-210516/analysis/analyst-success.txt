@@ -1,0 +1,13 @@
+# SUCCESS ANALYST OUTPUT
+# Generated: 2026-05-19T11:05:00.000Z
+# Exit code: 0
+
+RULE: Inject domain Rules.md only when prompt contains an exact token matching a hardcoded case-pattern glob (e.g. *portfolio*, *gan*loop*); single-word bare mentions like "GAN" without "loop" bypass all domain detection | EVIDENCE: runs 1, 4 PASS; runs 2, 11 FAIL | PRIORITY: high
+
+RULE: RuFlo intelligence retrieval fires on any prompt of 4+ words; succeeds when prompt content-matches high-PageRank nodes in ranked-context.json — domain block and RuFlo block are orthogonal, either alone can cause PASS | EVIDENCE: run 9 PASS (Labirynt), run 18 PASS (trace-to-skill) | PRIORITY: high
+
+RULE: Domain keyword patterns must include all surface-form variants of a concept (hyphenated, spaced, abbreviated) — pattern *gan*loop* requires both tokens; prompts using only acronym or expanded form miss entirely | EVIDENCE: run 4 PASS (gan-loop exact), run 3 FAIL (session loader spaced) | PRIORITY: high
+
+RULE: Automated PASS based solely on global dreamer rules block (output_length ~3584, no domain/RuFlo content) is a false positive — runner counts any non-empty context as PASS even when expected_keywords absent | EVIDENCE: run 16 automated PASS overridden by feedback.correct=false | PRIORITY: high
+
+RULE: Context length predicts enrichment quality — domain Rules.md injection produces 1650–2100 chars (substantive); global-rules-only output is consistently 3584 bytes; output_length < 4000 with no domain match signals empty/irrelevant enrichment | EVIDENCE: runs 1, 4, 9, 18 PASS (1650-2100 chars range) | PRIORITY: medium

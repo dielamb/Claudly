@@ -1,0 +1,1 @@
+/Users/michalmaciejewski/.claude/skills/gstack/context-save/SKILL.md
