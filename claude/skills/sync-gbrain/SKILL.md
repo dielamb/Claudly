@@ -1,1 +1,0 @@
-/Users/michalmaciejewski/.claude/skills/gstack/sync-gbrain/SKILL.md

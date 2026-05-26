@@ -290,19 +290,11 @@ CLAUDE="$HOME/.claude"
 0 20 1 * * bash $CLAUDE/scripts/ruflo-monthly-consolidate.sh >> $CLAUDE/logs/monthly.log 2>&1
 # Claudly — skill map update (Sunday 21:00)
 0 21 * * 0 bash $CLAUDE/scripts/skill-map-update.sh >> $CLAUDE/logs/skill-map.log 2>&1
-# Claudly — nightly maintenance (02:00 daily)
-0 2 * * * bash $CLAUDE/helpers/nightly-maintenance.sh >> $CLAUDE/logs/maintenance.log 2>&1
 # Claudly — janitor (02:00 daily)
 0 2 * * * $NODE_BIN $CLAUDE/helpers/janitor/orchestrator.mjs >> $CLAUDE/helpers/janitor/logs/cron.log 2>&1
-# Claudly — monthly rule maintenance (1st of month 09:00)
-0 9 1 * * bash $CLAUDE/helpers/monthly-rule-maintenance.sh >> $CLAUDE/logs/monthly-rules.log 2>&1
-# Claudly — weekly health report (Monday 08:00)
-0 8 * * 1 $NODE_BIN $CLAUDE/helpers/weekly-health-report.js >> $CLAUDE/logs/weekly-health.log 2>&1
-# Claudly — inbox nudge (09:00 daily)
-0 9 * * * bash $CLAUDE/helpers/inbox-nudge.sh >> $CLAUDE/logs/inbox-nudge.log 2>&1
 CRON
 ) | crontab - 2>/dev/null \
-  && ok "9 cron jobs installed" \
+  && ok "5 cron jobs installed" \
   || info "Cron setup failed — run 'crontab -e' manually (see GETTING_STARTED.md)"
 
 # ── Done ─────────────────────────────────────────────────────
@@ -325,13 +317,13 @@ echo "   4. Type /graphify to build initial knowledge graph"
 echo "   5. Read: GETTING_STARTED.md in this repo"
 echo ""
 echo " What's installed:"
-echo "   - Claude Code CLI + 226 skills + 40 agents"
+echo "   - Claude Code CLI + skills + agents"
 echo "   - RTK token optimizer (60-90% savings)"
 echo "   - lean-ctx context engineering layer"
-echo "   - claude-flow + ruflo + 4 MCP servers"
+echo "   - claude-flow + ruflo + MCP servers"
 echo "   - Obsidian vault with 8 plugins + templates"
-echo "   - 9 automated cron jobs"
-echo "   - 50+ hooks (pre/post tool, session, routing)"
+echo "   - 5 automated cron jobs"
+echo "   - Hooks (pre/post tool, session, routing)"
 echo "   - GSD (Get Shit Done) framework"
 echo "   - Domain knowledge loop + graphify"
 echo "================================================"
