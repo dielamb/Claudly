@@ -1,1 +1,0 @@
-/Users/michalmaciejewski/.claude/skills/gstack/benchmark-models/SKILL.md
