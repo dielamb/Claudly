@@ -149,7 +149,7 @@ No exceptions. Code blocks are the implementation.
 **Vault:** `~/Desktop/Labirynt/` — full routing in `~/Desktop/Labirynt/CLAUDE.md`
 
 **Locations:**
-- User profile: `3 Atlas/Career/Michal Maciejewski - Profil.md`
+- User profile: `3 Atlas/Career/Your Name - Profil.md`
 - Decisions: `3 Atlas/Career/Decisions.md`
 - Active projects: `2 Efforts/`
 - Solved problems: `3 Atlas/Problems/`

@@ -1,6 +1,6 @@
 # Labirynt — Second Brain AI Router
 
-Ten vault to drugi mózg Michała Maciejewskiego. Zawiera wiedzę prywatną i zawodową.
+Ten vault to drugi mózg użytkownika. Zawiera wiedzę prywatną i zawodową.
 Jako AI agent, przestrzegaj tych zasad przy czytaniu i zapisywaniu.
 
 ## Struktura
@@ -25,7 +25,7 @@ Jako AI agent, przestrzegaj tych zasad przy czytaniu i zapisywaniu.
 | `Code/` | CSS tricki, JS patterns, snippety |
 | `Tools/` | MCPy, pluginy, narzędzia, konfiguracje |
 | `Health/` | Waga, trening, zdrowie, suplementy |
-| `Finance/` | Stawki, wydatki, inwestycje, podatki |
+| `Finance/` | Notatki finansowe, podatki |
 | `Career/` | CV, decyzje zawodowe, preferencje pisania |
 | `Problems/` | Problem-solution notes (rozwiązane problemy) |
 | `Synthesis/` | **Syntezy z rozmów** — compounding answers na nietrywialne pytania |
@@ -49,7 +49,7 @@ Nie każda wiedza to "problem-solution". Jedna sesja może wygenerować 3+ notat
 | `Synthesis/` | **Synteza 3+ notatek** w odpowiedzi na nietrywialne pytanie | `synthesis` | "Comparison: graphify vs intelligence vs RuFlo" |
 | `Reasoning/` | **Dlaczego X zamiast Y** — trade-offs, architektura, design rationale | `reasoning` | "Why shadow layer over patches for RuFlo extensions" |
 | `Career/` | Decyzje zawodowe, CV, rationale | `decision` / `rationale` | (do Decisions.md) |
-| `Health/` `Finance/` `Relationships/` | Fakty osobiste | `fact` | Waga, stawka, nota o osobie |
+| `Health/` `Finance/` `Relationships/` | Fakty osobiste | `fact` | Notatki osobiste |
 | `0 Inbox/` | **Confidence < 70%** — nie wiem gdzie | `unsorted` | Gdy notatka pasuje do kilku folderów niejednoznacznie |
 
 ### Zasada splittingu — jedna sesja → wiele folderów

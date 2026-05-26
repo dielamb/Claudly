@@ -12,7 +12,7 @@ tags:
 - [[MOC - People|Ludzie]]
 - [[MOC - Design Systems|Design Systems]]
 - [[Decisions|Decyzje]]
-- [[Michal Maciejewski - Profil|Ja]]
+- [[Your Name - Profil|Ja]]
 
 ## Aktywne Efforts
 

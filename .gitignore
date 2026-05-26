@@ -72,17 +72,23 @@ claude/helpers/janitor/.claude-flow/
 claude/helpers/swarm-state.json
 claude/helpers/wikilink-warnings.txt
 claude/tools/
+claude/scripts/logs/*.log
+
+# ── Runtime state (nested) ───────────────────────────────────
+**/router-history.json
+**/sona-patterns.json
+**/.claude-flow/data/
+**/.claude-flow/sessions/
+**/.swarm/
+**/results/*.json
 
 # ── Node / Python ─────────────────────────────────────────────
 node_modules/
 __pycache__/
 *.pyc
 .venv/
+**/dist/browse
 
-# ── Obsidian personal notes (only if user adds real content) ────
-# Template repo ships empty folders — structure must be in git
-# If you fork and use as personal vault, add your note folders here:
-# obsidian/vault/1 Calendar/
-# obsidian/vault/2 Efforts/
-# etc.
+# ── Root runtime ─────────────────────────────────────────────
 .claude-flow/
+.swarm/

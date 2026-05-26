@@ -11,6 +11,11 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 USERNAME=$(whoami)
 HOME_DIR="$HOME"
 
+has() { command -v "$1" &>/dev/null; }
+info() { echo "  → $1"; }
+ok()   { echo "  ✓ $1"; }
+fail() { echo "  ✗ $1"; exit 1; }
+
 echo "================================================"
 echo " Claudly — Claude Code Setup Installer"
 echo " User: $USERNAME | Home: $HOME_DIR"
@@ -40,11 +45,6 @@ if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
   fi
 fi
 echo ""
-
-has() { command -v "$1" &>/dev/null; }
-info() { echo "  → $1"; }
-ok()   { echo "  ✓ $1"; }
-fail() { echo "  ✗ $1"; exit 1; }
 
 # Substitute __HOME__, __USERNAME__, __USER_EMAIL__ placeholders
 apply_placeholders() {
